@@ -1,0 +1,36 @@
+<div class="well">
+    <button ng-click="saveSettings()" class="btn btn-default"><i class="fa fa-floppy-o"></i> Save Server Settings</button>
+</div>
+<div class="well">
+    <fieldset>
+        <legend>PI WEBAPI Server</legend>
+        <div class="row">
+            <div class="col-md-12">
+                <div style="padding-right: 100px">
+                    <div class="form-group">
+                        <label>PI WebAPI Host: </label>
+                        <input class="form-control input-sm" ng-model="srvConfig.webapi_host" type="text" />
+                    </div>
+                </div>
+                <div style="padding-right: 100px">
+                    <div class="form-group">
+                        <label>Username: </label>
+                        <input class="form-control input-sm" ng-model="srvConfig.username" type="text" />
+                    </div>
+                </div>
+                <div style="padding-right: 100px">
+                    <div class="form-group">
+                        <label>Password: </label>
+                        <input class="form-control input-sm" ng-model="srvConfig.password" type="password" />
+                    </div>
+                </div>
+                <div style="padding-right: 100px">
+                    <div class="form-group">
+                        <label>Request last data point when subscribing: </label>
+                        <input class="form-control input-sm" ng-model="srvConfig.requestLastPoint" type="checkbox" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</div>

@@ -1,0 +1,27 @@
+{
+  "var_name": "xompass-pi-webapi-browser",
+  "version": "1.0.0",
+  "description": "Xompass PI WebAPI Browser",
+  "name": "xompass-pi-webapi-browser",
+  "main": "http://localhost:7450/#/settings",
+  "node-main": "xompass-pi-webapi-browser.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node xompass-pi-webapi-browser.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://bitbucket.org/sharedxompass/xompass-pi-webapi-browser.git"
+  },
+  "author": "Andres Ulloa",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "express": "^4.13.4",
+    "express-ws": "^2.0.0",
+    "express-ws-routes": "^1.1.0",
+    "request": "^2.69.0",
+    "ws": "^1.1.1"
+  },
+  "devDependencies": {}
+}

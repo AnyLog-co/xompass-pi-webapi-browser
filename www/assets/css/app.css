@@ -1,0 +1,38 @@
+/* line 1, ../scss/_bs-custom.scss */
+.panel-heading {
+  position: relative;
+}
+
+/* line 6, ../scss/_bs-custom.scss */
+.panel-heading .btn-group {
+  position: absolute;
+  right: 10px;
+  top: 4px;
+}
+/* line 12, ../scss/_bs-custom.scss */
+.panel-heading h4 {
+  margin: 0;
+}
+
+/* line 17, ../scss/_bs-custom.scss */
+.well {
+  position: relative;
+}
+
+/* line 21, ../scss/_bs-custom.scss */
+.well-light {
+  background: #fcfcfc;
+}
+
+/* line 3, ../scss/app.scss */
+body {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+/* line 8, ../scss/app.scss */
+.btn-remove {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+}

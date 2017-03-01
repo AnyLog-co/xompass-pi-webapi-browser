@@ -1,0 +1,31 @@
+{
+  "name": "xompass-analysis-service",
+  "description": "Xompass Realtime Analysis service",
+  "main": "analysis-service.js",
+  "authors": [
+    "Andres Ulloa"
+  ],
+  "license": "ISC",
+  "moduleType": [],
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "www/bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "^1.4.8",
+    "angular-sanitize": "^1.4.9",
+    "bootstrap": "^3.3.6",
+    "jquery-ui": "^1.11.4",
+    "font-awesome": "^4.5.0",
+    "angular-websocket": "^1.0.14",
+    "json-tree": "^0.1.3",
+    "angular-route": "^1.5.0",
+    "ngclipboard": "^1.1.1"
+  }
+}

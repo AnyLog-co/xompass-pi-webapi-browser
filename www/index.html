@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sample" ng-controller="AppCtrl">
+<head>
+    <title ng-bind="$state.current.data.pageTitle">Xompass PI WebAPI Browser</title>
+    <meta charset="UTF-8">
+
+    <!-- Component Styles -->
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/css/font-awesome.min.css" rel="stylesheet">
+    <link href="assets/css/json-tree.css" rel="stylesheet"/>
+
+    <!-- Component Scripts -->
+    <script type="text/javascript" src="assets/js/jquery.min.js"></script>
+    <script type="text/javascript" src="assets/js/dropdown.js"></script>
+    <script type="text/javascript" src="assets/js/angular.min.js"></script>
+    <script type="text/javascript" src="assets/js/angular-route.min.js"></script>
+    <script type="text/javascript" src="assets/js/angular-ui-router.min.js"></script>
+    <script type="text/javascript" src="assets/js/json-tree.js"></script>
+    <script type="text/javascript" src="assets/js/clipboard.min.js"></script>
+    <script type="text/javascript" src="assets/js/ngclipboard.min.js"></script>
+    <script type="text/javascript" src="assets/js/angular-websocket.min.js"></script>
+
+
+    <!-- App Styles -->
+    <link rel="stylesheet" type="text/css" href="assets/css/app.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/settings.css">
+    <link rel="stylesheet" type="text/css" href="views/pielements/pielements.css">
+
+    <!-- App Sripts -->
+    <script type="text/javascript" src="app.js"></script>
+    <script type="text/javascript" src="views/settings/settings.js"></script>
+    <script type="text/javascript" src="views/pielements/pielements.js"></script>
+
+</head>
+<body>
+<div class="container">
+    <div class="navbar navbar-default">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Xompass PI WebAPI Browser</a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li ui-sref-active="active"><a ui-sref="home">Home</a></li><!-- General Info Here or maybe User Guide -->
+            <li ui-sref-active="active"><a ui-sref="pielements">PI Elements</a></li>
+            <li ui-sref-active="active"><a ui-sref="settings">Settings</a></li>
+        </ul>
+    </div>
+</div>
+<div class="container" ui-view=""></div>
+</body>
+</html>
