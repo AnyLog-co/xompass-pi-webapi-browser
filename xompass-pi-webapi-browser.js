@@ -15,7 +15,7 @@ var defConfig = require(appRoot + '/config_files/config_default').defaultConfig;
 var httpServer = require(appRoot + '/exp-server');
 var interface = require(appRoot + '/modules/interface');
 
-let dir = './settings/';
+let dir = './config_files/';
 
 freader.setDefaultDir(dir);
 

@@ -1,6 +1,6 @@
 <div class="well well-sm">
-    <button class="btn btn-primary pull-right" ng-click="getDataBases()"><i class="fa fa-refresh"></i>Read Settings</button>
-    <button class="btn btn-primary pull-right" ng-click="saveSettings()"><i class="fa fa-floppy-o"></i>Save Settings</button>
+    <button class="btn btn-default pull-right" ng-click="getDataBases()"><i class="fa fa-refresh"></i> Read Settings</button>
+    <button class="btn btn-default pull-left" ng-click="saveSettings()"><i class="fa fa-floppy-o"></i> Save Settings</button>
     <div class="clearfix"></div>
 </div>
 <div class="col-md-12 well">
@@ -22,8 +22,7 @@
     <div class="col-md-8 well-light">
         <!--<button ng-click="toggleAllElementSubscription()">Subscribe to All Attributes in Workspace</button>-->
         <span ng-if="tree.currentNode.Id"><b>Attributes of Element</b> : {{tree.currentNode.title}}</span>
-        <button ng-if="tree.currentNode.Id" ng-click="toggleElementSubscription(tree.currentNode.Id)">Subscribe to All Attributes of this Element</button>
-        <div ng-if="tree.currentNode.Id"><input type="number" placeholder="STA" ng-model="srvPiConfig.elements[tree.currentNode.Id].STA"><input type="number" placeholder="SID" ng-model="srvPiConfig.elements[tree.currentNode.Id].SID"></div>
+        <button class="btn btn-default pull-right" ng-if="tree.currentNode.Id" ng-click="toggleElementSubscription(tree.currentNode.Id)"><i class="fa fa-check-circle-o"></i> Subscribe to All Attributes of this Element</button>
         <table class="table table-striped">
             <thead>
             <tr>
