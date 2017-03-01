@@ -5,21 +5,22 @@
 **Clone the repository in your favorite directory**
 **git clone https://github.com/xompass/xompass-pi-webapi-browser.git**
 **cd xompass-pi-webapi-browser**
-**npm install**  
+**npm install**
 **npm start**
 
 ## Features
-Connect to a PI System with the WebAPI
-Navigate Through the Element Hierarchy
-Subscribe to realtime data (only on servers that support it)
-Websockets in frontend
+* Connect to a PI System with the WebAPI
+* Navigate Through the Element Hierarchy
+* Subscribe to realtime data (only on servers that support it)
+* Websockets in frontend
 
 ## Usage
 Web view (default port 7400) allows the following
-Settings:
+
+### Settings:
 General Settings for PI System Access.  Requires to Save Settings and reload Service.
 
-PI Elements:
+### PI Elements:
 Allows navigation and data subscription. Rememeber to click on Save Settings to avoid reloading everything everytime you enter the page.
 
 
@@ -31,10 +32,10 @@ Allows navigation and data subscription. Rememeber to click on Save Settings to 
 
 
 ## TODO
-Since this is a spin-off from another project requires the following
-Cleaning of interface.js module and better encapsulation (create more modules maybe needed)
-Cleaning of comments
-Removing unused variables
-Cleaning in general
-Add authentication, ideally with Azure Active Directory
-Bring important logs to the frontend (replace console.logs on backend by wsockets.log to send the logs to the webpage and improve debugging)
+* Since this is a spin-off from another project requires the following
+* Cleaning of interface.js module and better encapsulation (create more modules maybe needed)
+* Cleaning of comments
+* Removing unused variables
+* Cleaning in general
+* Add authentication, ideally with Azure Active Directory
+* Bring important logs to the frontend (replace console.logs on backend by wsockets.log to send the logs to the webpage and improve debugging)
