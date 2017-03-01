@@ -1,12 +1,12 @@
 # Xompass PI WEBAPI Interface
 
 ## Installation
-**Install Node.js v6.9+ [Here](https://nodejs.org/en/)**
-**Clone the repository in your favorite directory**
-**git clone https://github.com/xompass/xompass-pi-webapi-browser.git**
-**cd xompass-pi-webapi-browser**
-**npm install**
-**npm start**
+* **Install Node.js v6.9+ [Here](https://nodejs.org/en/)**
+* **Clone the repository in your favorite directory**
+* ``git clone https://github.com/xompass/xompass-pi-webapi-browser.git``
+* ``cd xompass-pi-webapi-browser``
+* ``npm install``
+* ``npm start``
 
 ## Features
 * Connect to a PI System with the WebAPI
@@ -18,17 +18,17 @@
 Web view (default port 7400) allows the following
 
 ### Settings:
-General Settings for PI System Access.  Requires to Save Settings and reload Service.
+* General Settings for PI System Access.  Requires to Save Settings and reload Service.
 
 ### PI Elements:
-Allows navigation and data subscription. Rememeber to click on Save Settings to avoid reloading everything everytime you enter the page.
+* Allows navigation and data subscription. Rememeber to click on Save Settings to avoid reloading everything everytime you enter the page.
 
 
 ## Structure
-**config_files/**  folder stores all the setting files (this should use a database for production)
-**routes/**  folder contains the routes files for the website
-**modules/**  folder contains all modules used. One module for each PI object handling (elements, templates, tags, databases, etc)
-**modules/interface.js**  module implements the PI WebAPI main calls reading and prepares all the objects (maps) to allow the Hierarchy Reading
+* **config_files/**  folder stores all the setting files (this should use a database for production)
+* **routes/**  folder contains the routes files for the website
+* **modules/**  folder contains all modules used. One module for each PI object handling (elements, templates, tags, databases, etc)
+* **modules/interface.js**  module implements the PI WebAPI main calls reading and prepares all the objects (maps) to allow the Hierarchy Reading
 
 
 ## TODO
