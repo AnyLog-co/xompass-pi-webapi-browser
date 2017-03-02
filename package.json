@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://bitbucket.org/sharedxompass/xompass-pi-webapi-browser.git"
+    "url": "https://github.com/xompass/xompass-pi-webapi-browser.git"
   },
   "author": "Andres Ulloa",
   "license": "ISC",
