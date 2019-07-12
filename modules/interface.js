@@ -131,14 +131,15 @@ getDataServers = function (callback){
 var waitingAssetServers = 0;
 exports.getAssetServers = function (callback){
     getFromApi(getBaseUri() + 'assetservers', function(response, jsonbody){
-        waitingAssetServers = jsonbody.Items.length;
-        jsonbody.Items.forEach(function(element) {
-            srvPiConfig.assetServers[element.Id] = element;
-            srvPiConfig.elements[element.Id] = element; //TODO: VERIFY
-            srvPiConfig.webIds[element.WebId] = element.Id;
-            srvPiConfig.idToWebId[element.Id] = element.WebId;
-            callback(srvPiConfig.assetServers[element.Id].WebId, --waitingAssetServers);
-        });
+        console.log(jsonbody)
+        if(jsonbody.Items)
+            jsonbody.Items.forEach(function(element) {
+                srvPiConfig.assetServers[element.Id] = element;
+                srvPiConfig.elements[element.Id] = element; //TODO: VERIFY
+                srvPiConfig.webIds[element.WebId] = element.Id;
+                srvPiConfig.idToWebId[element.Id] = element.WebId;
+                callback(srvPiConfig.assetServers[element.Id].WebId, --waitingAssetServers);
+            });
     }, function(err){
         console.log(err);
     });
