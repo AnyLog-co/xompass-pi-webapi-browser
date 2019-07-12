@@ -30,9 +30,12 @@ Web view (default port 7400) allows the following
 * **modules/**  folder contains all modules used. One module for each PI object handling (elements, templates, tags, databases, etc)
 * **modules/interface.js**  module implements the PI WebAPI main calls reading and prepares all the objects (maps) to allow the Hierarchy Reading
 
+## WebAPI Requirements
+WebAPI must have Basic Authenticaiton Enabled
 
 ## TODO
-* Since this is a spin-off from another project requires the following
+* Since this is a cut-off from another project requires the following
+* Implement JWT authroization
 * Cleaning of interface.js module and better encapsulation (create more modules maybe needed)
 * Cleaning of comments
 * Removing unused variables
