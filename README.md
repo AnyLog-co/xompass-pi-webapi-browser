@@ -1,6 +1,6 @@
 # Xompass PI WEBAPI Interface
 
-![Image of App](https://github.com/xompass/xompass-pi-webapi-browser/screenshot.png)
+![Image of App](https://github.com/xompass/xompass-pi-webapi-browser/blob/master/screenshot.png)
 
 ## Installation
 * **Install Node.js v6.9+ [Here](https://nodejs.org/en/)**
