@@ -13,18 +13,21 @@ readFile('servers.json', function(data){
 })
  * */
 let crypto = require('crypto'),
-    algorithm = 'aes-256-ctr',
-    password = 'rkWazcDmgvFur4tA';
+    algorithm = 'aes-256-cbc',
+    password = 'rkWazcDmgvFur4tArkWazcDmgvFur4tA',
+    iv = Buffer.from('1ina79sdnoasfhy2');
 
 function encrypt(text){
-    var cipher = crypto.createCipheriv(Buffer.from(algorithm,password))
-    var crypted = cipher.update(text,'utf8','hex')
+    var ivstring = iv.toString('hex').slice(0, 16);
+    var cipher = crypto.createCipheriv(algorithm,Buffer.from(password), ivstring);
+    var crypted = cipher.update(text,'utf8','hex');
     crypted += cipher.final('hex');
     return crypted;
 }
 
 function decrypt(text){
-    var decipher = crypto.createDecipher(algorithm,password)
+    var ivstring = iv.toString('hex').slice(0, 16);
+    var decipher = crypto.createDecipheriv(algorithm,Buffer.from(password), ivstring)
     var dec = decipher.update(text,'hex','utf8')
     dec += decipher.final('utf8');
     return dec;
@@ -85,7 +88,7 @@ exports.saveFile = function(_filename, data, callback){
     if(callback)
         fs.writeFile(filename, encrypt(data), callback);
     else
-        fs.writeFile(filename, encrypt(data));
+        fs.writeFile(filename, encrypt(data), (err)=>{if(err)console.log(err);});
 };
 
 /*
