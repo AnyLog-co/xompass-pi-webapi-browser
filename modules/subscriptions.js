@@ -8,7 +8,7 @@ var b64login = "";
 var opts = {};
 
 exports.start = function(){
-    b64login = new Buffer(srvConfig.username + ":" + srvConfig.password).toString('base64');
+    b64login = Buffer.from(srvConfig.username + ":" + srvConfig.password).toString('base64');
     opts = {
         rejectUnauthorized: false,
         headers: {
@@ -73,7 +73,9 @@ addStream = function(attributeId){
         console.log('Received on ' + this.Name + " " + this.Id + " :\n" + message);
         // If Value is object is because point has no data, just created
         try{
+            //console.log(jsonMsg);
             var jsonMsg = JSON.parse(message);
+           // console.log(jsonMsg);
             jsonMsg.Items.forEach(function(msg){
                 let attributeId = srvPiConfig.attPathToId[msg.Path];
                 if(srvPiConfig.attributes[attributeId] && srvPiConfig.attributes[attributeId].Subscribed){
