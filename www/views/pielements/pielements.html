@@ -22,6 +22,7 @@
     <div class="col-md-8 well-light">
         <!--<button ng-click="toggleAllElementSubscription()">Subscribe to All Attributes in Workspace</button>-->
         <span ng-if="tree.currentNode.Id"><b>Attributes of Element</b> : {{tree.currentNode.title}}</span>
+        <span ng-if="tree.currentNode.Id"><b>Element Template</b> : {{srvPiConfig.elements[tree.currentNode.Id].TemplateName}}</span>
         <button class="btn btn-default pull-right" ng-if="tree.currentNode.Id" ng-click="toggleElementSubscription(tree.currentNode.Id)"><i class="fa fa-check-circle-o"></i> Subscribe to All Attributes of this Element</button>
         <table class="table table-striped">
             <thead>
