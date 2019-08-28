@@ -202,6 +202,7 @@ getRootTemplates = function (webId){
             srvPiConfig.idToWebId[element.Id] = element.WebId;
             if(element.Links)
                 delete element.Links;
+            console.log(element)
         });
     }, function(err){
         console.log(err);
@@ -339,20 +340,21 @@ getAttributes = function (webId, callback){
         }
         attributeCount = jsonbody.Items.length;
 
-        var elementId = srvPiConfig.webIds[webId];
-        if(!srvPiConfig.webIds[webId])
-            console.log("Get Elements before requesting Attributes");
-        if(srvPiConfig.elements[elementId]){
-            if(!srvPiConfig.elements[elementId].Attributes)
-                srvPiConfig.elements[elementId].Attributes = [];
-            srvPiConfig.elements[elementId].AttributesLength = jsonbody.Items.length;
-        }
-
         if(jsonbody.Items.length == 0){
             console.log("No Attributes on Element");
             callback("");
             return;
         }
+
+        var elementId = srvPiConfig.webIds[webId];
+        if(!srvPiConfig.webIds[webId])
+            console.log("Get Elements before requesting Attributes");
+        if(srvPiConfig.elements[elementId]){
+            //if(!srvPiConfig.elements[elementId].Attributes)
+            srvPiConfig.elements[elementId].Attributes = [];
+            srvPiConfig.elements[elementId].AttributesLength = jsonbody.Items.length;
+        }
+
 
         jsonbody.Items.forEach(function (element, key) {
             srvPiConfig.attributes[element.Id] = element;
@@ -362,6 +364,63 @@ getAttributes = function (webId, callback){
             srvPiConfig.webIds[element.WebId] = element.Id;
             srvPiConfig.idToWebId[element.Id] = element.WebId;
             if (element.Links)
+                for(link in element.Links)
+                    getAttributes(link.WebId, function(){})
+                delete element.Links;
+            attributesChecked++;
+            //callback(element.Path, --waitingAttributes);
+            if(attributesChecked == attributeCount)
+                callback(element.WebId);
+        });
+    }, function(err){
+        console.log(err);
+    });
+};
+
+// Gets attributes from one WebId Attribute
+getAttributeAttributes = function (webId, callback){
+
+    let attributeCount = 0;
+    let attributesChecked = 0;
+    getFromApi(getBaseUri() + '/attributes/' + webId + '/attributes', function(response, jsonbody){
+        if(jsonbody.statusCode != 200 && jsonbody.statusCode != 201){
+            console.log("Error Retrieving AttAttributes");
+            console.log(jsonbody);
+            callback("");
+            return;
+        }
+        attributeCount = jsonbody.Items.length;
+        var attributeId = srvPiConfig.webIds[webId];
+        var elementId = srvPiConfig.attributes[attributeId].ParentElement;
+
+        if(!srvPiConfig.webIds[webId])
+            console.log("Get Elements before requesting Attributes");
+
+            
+        if(jsonbody.Items.length == 0){
+            console.log("No Attributes on Attribute");
+            callback("");
+            return;
+        }else{
+            srvPiConfig.attributes[attributeId].HasChildren = true;
+        }
+        if(srvPiConfig.elements[elementId]){
+            if(!srvPiConfig.elements[elementId].Attributes)
+                srvPiConfig.elements[elementId].Attributes = [];
+            srvPiConfig.elements[elementId].AttributesLength += jsonbody.Items.length;
+        }
+
+
+        jsonbody.Items.forEach(function (element, key) {
+            srvPiConfig.attributes[element.Id] = element;
+            srvPiConfig.attributes[element.Id].ParentElement = elementId;
+            srvPiConfig.elements[elementId].Attributes.push(element.Id);
+            srvPiConfig.attPathToId[element.Path] = element.Id;
+            srvPiConfig.webIds[element.WebId] = element.Id;
+            srvPiConfig.idToWebId[element.Id] = element.WebId;
+            if (element.Links)
+                for(link in element.Links)
+                    getAttributes(link.WebId, function(){})
                 delete element.Links;
             attributesChecked++;
             //callback(element.Path, --waitingAttributes);
@@ -377,7 +436,7 @@ getAttributes = function (webId, callback){
 getAllAttributes = function(){
     console.log("all att")
     Object.keys(srvPiConfig.elements).forEach(function(keyName){
-        getAttributes(srvPiConfig.elements[keyName].WebId);
+        getAttributes(srvPiConfig.elements[keyName].WebId, function(){});
     });
 };
 
@@ -386,7 +445,7 @@ genElementTree = function(callback){
     //Get the Element
     srvPiConfig.pathTree = {};
     srvPiConfig.pathTreeArray = [];
-    console.log("Generating Element Tree");
+    //console.log("Generating Element Tree");
     if(srvPiConfig && srvPiConfig.elements)
     Object.keys(srvPiConfig.elements).forEach(function(keyName, key){
         //Go through the Path compontens
@@ -395,7 +454,7 @@ genElementTree = function(callback){
         addNode = function(parentNode, nodeNameIndex) {
             var nodeName = pathList[nodeNameIndex];
             if(nodeName == ""){
-                nodeName = "PI Server";
+                nodeName = "PI Servers";
             }
             if (!parentNode[nodeName]) {
                 parentNode[nodeName] = {};
@@ -473,3 +532,5 @@ exports.updateSubs = updateSubs;
 exports.getAllFromApi = getAllFromApi;
 exports.getFromApi = getFromApi;
 exports.getAttributes = getAttributes;
+exports.getAttributeAttributes = getAttributeAttributes;
+exports.initialPiconfig = initialPiconfig;

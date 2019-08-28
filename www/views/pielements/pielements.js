@@ -18,6 +18,14 @@ angular.module('app.pielements',['angularTreeview', 'ngclipboard','ngWebSocket']
                 });
         };
 
+        $scope.removeSubcriptions = function(){
+            for(var i=0; i< $scope.srvPiConfig.subscribedAttributes.length; i++){
+                var att = $scope.srvPiConfig.subscribedAttributes[0];
+                socket.send({MSGTYPE: "remove", TYPE: "subscriptions", ATTID: att.Id});
+                $scope.srvPiConfig.subscribedAttributes.splice(0,1);
+            }
+        }
+
         $scope.setAttSubscription = function(attId, elementId, status){
             if(status == true){
                 if(!$scope.srvPiConfig.subscribedAttributes)
@@ -40,6 +48,7 @@ angular.module('app.pielements',['angularTreeview', 'ngclipboard','ngWebSocket']
             }
         };
 
+
         $scope.toggleAttSubscription = function(attId, elementId){
             $scope.setAttSubscription(attId, elementId, $scope.srvPiConfig.attributes[attId].Subscribed);
         };
@@ -49,10 +58,12 @@ angular.module('app.pielements',['angularTreeview', 'ngclipboard','ngWebSocket']
             // If founds one active att in the Element, unset them all
             var hasActiveSubs = false;
 
-            if(!$scope.srvPiConfig.elements[elementId].STA || !$scope.srvPiConfig.elements[elementId].STA){
-                console.warn("Element " + $scope.srvPiConfig.elements[elementId].Name + " Missing STA or SID.");
-                alert("Element " + $scope.srvPiConfig.elements[elementId].Name + " Missing STA or SID.");
-                return;
+            if(!$scope.srvPiConfig.elements[elementId].SID || !$scope.srvPiConfig.elements[elementId].STA){
+                $scope.srvPiConfig.elements[elementId].SID = 100;
+                $scope.srvPiConfig.elements[elementId].STA = 100;
+                //console.warn("Element " + $scope.srvPiConfig.elements[elementId].Name + " Missing STA or SID.");
+                //alert("Element " + $scope.srvPiConfig.elements[elementId].Name + " Missing STA or SID.");
+                //return;
             }
 
             for(var i in $scope.srvPiConfig.elements[elementId].Attributes){
@@ -203,6 +214,12 @@ angular.module('app.pielements',['angularTreeview', 'ngclipboard','ngWebSocket']
                             $scope.srvPiConfig = response.DATA;
                             break;
                         case "data":
+                            /*if(!$scope.srvPiConfig.subscribedAttributes){
+                                $scope.srvPiConfig.subscribedAttributes=[];
+                            }
+                            if($scope.srvPiConfig.subscribedAttributes.indexOf(response.ATTID) < 0){
+                                $scope.setAttSubscription(response.ATTID, $scope.srvPiConfig.attributes[response.ATTID].ParentElement, true);
+                            }*/
                             if($scope.srvPiConfig.attributes[response.ATTID]){
                                 $scope.srvPiConfig.attributes[response.ATTID].LastValue = response.VALUE;
                             }else{
@@ -233,6 +250,11 @@ angular.module('app.pielements',['angularTreeview', 'ngclipboard','ngWebSocket']
             }
         }
 
+        $scope.getAttributeAttributes = function( id){
+            if(id){
+                socket.send({MSGTYPE: "get", TYPE: "attributeAttributes", ID: id});
+            }
+        }
     })
     .factory('socket', function($websocket) {
         // Open a WebSocket connection

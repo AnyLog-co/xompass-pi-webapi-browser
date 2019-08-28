@@ -11,4 +11,5 @@ exports.defaultConfig =
         "username": "webapiuser",
         "password": "!try3.14webapi!",
         "requestLastPoint": true,
+        "localOutputPath": "D:/json-files"
     }

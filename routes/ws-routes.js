@@ -17,6 +17,7 @@ router.ws('/pielements', function(ws, req) {
             if(data.MSGTYPE == "get"){
                 switch(data.TYPE){
                     case "databases":
+                        srvPiConfig = interface.initialPiconfig;
                         interface.getAssetServers(function(asWebId, pendingAServers){
                             //console.log("Pending AS: " + pendingAServers);
                             interface.getDataBases(asWebId, function(dbWebId, pendingDBs){
@@ -47,6 +48,12 @@ router.ws('/pielements', function(ws, req) {
                         subscriptions.getStreams();
                         break;
                     case "attribute":
+                        break;
+                    case "attributeAttributes":
+                        interface.getAttributeAttributes(srvPiConfig.idToWebId[data.ID], function(childWebId){
+                            console.log("Children Attributes GOT");
+                            wsockets.updatePiConfig();
+                        });
                         break;
                     default:
                         wsockets.log("Invalid command sent");

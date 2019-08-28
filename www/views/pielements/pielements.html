@@ -5,6 +5,7 @@
 </div>
 <div class="col-md-12 well">
     <span><b>PI Tags Subscribed to ({{srvPiConfig.subscribedAttributes.length || 0}})</b> : <span ng-repeat="att in srvPiConfig.subscribedAttributes" class="label-info">{{att.Name}}</span></span>
+    <button ng-click="removeSubcriptions()">Remove ALL subscriptions</button>
 </div>
 <div class="col-md-12 well">
     <div class="col-md-4 well-light">
@@ -36,8 +37,8 @@
             </tr>
             </thead>
             <tbody>
-            <tr ng-repeat="attId in srvPiConfig.elements[tree.currentNode.Id].Attributes track by $index">
-                <th>{{srvPiConfig.attributes[attId].Name}}</th>
+            <tr ng-repeat="attId in srvPiConfig.elements[tree.currentNode.Id].Attributes track by $index"  >
+                <th>{{srvPiConfig.attributes[attId].Name}}<button ng-if="srvPiConfig.attributes[attId].HasChildren" ng-click="getAttributeAttributes(attId)">+</button></th>
                 <th>{{srvPiConfig.attributes[attId].Id}}</th>
                 <th><button class="btn" ngclipboard data-clipboard-text={{srvPiConfig.attributes[attId].WebId}}><i class="fa fa-copy"></i></button></th>
                 <th>{{srvPiConfig.attributes[attId].DataReferencePlugIn}}</th>

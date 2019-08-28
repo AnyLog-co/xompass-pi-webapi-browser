@@ -6,7 +6,6 @@ var interface = require(appRoot + '/modules/interface');
 
 function updatePiConfig(){
     interface.genElementTree(function(){
-
         send({MSGTYPE:"updatePiConfig",DATA:srvPiConfig});
     });
 }
