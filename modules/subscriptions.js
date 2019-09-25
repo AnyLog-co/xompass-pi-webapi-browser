@@ -86,6 +86,14 @@ addStream = function(attributeId){
                 if(srvPiConfig.attributes[attributeId] && srvPiConfig.attributes[attributeId].Subscribed){
                     msg.Items.forEach(function(valueObj){
                         if(valueObj.Good == true){
+
+                            //workaround enums
+                            if(valueObj.Value && valueObj.Value.Value && valueObj.Value.Name){
+                                valueObj.Value = valueObj.Value.Name
+                                //console.log("WORKAROUND ENUM NEW ENTRY")
+                                //console.log(valueObj)
+                            }
+
                             let newValueObj = {
                                 //********
                                 // Added by Andres to get Extra Info
