@@ -14,6 +14,7 @@ global.freader = require(appRoot + '/modules/file-reader'); // Used to manage Lo
 var defConfig = require(appRoot + '/config_files/config_default').defaultConfig;
 var httpServer = require(appRoot + '/exp-server');
 var interface = require(appRoot + '/modules/interface');
+var interface2 = require(appRoot + '/modules/interface2');
 
 let dir = './config_files/';
 
@@ -36,6 +37,7 @@ freader.readFile('server_config.json', function (data) {
 function start() {
     httpServer.start();
     interface.start();
+    interface2.start();
 }
 
 //*************************

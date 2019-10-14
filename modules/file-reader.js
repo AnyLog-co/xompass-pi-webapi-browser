@@ -90,6 +90,12 @@ exports.saveFile = function(_filename, data, callback){
     else
         fs.writeFile(filename, encrypt(data), (err)=>{if(err)console.log(err);});
 };
+exports.saveFile2 = function(filename, data, callback){
+    if(callback)
+        fs.writeFile(filename, encrypt(data), callback);
+    else
+        fs.writeFile(filename, encrypt(data), (err)=>{if(err)console.log(err);});
+};
 
 /*
 * TODO: appendFile not working anylonger when using crypto
