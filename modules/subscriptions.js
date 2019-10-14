@@ -89,7 +89,7 @@ addStream = function(attributeId){
 
                             //workaround enums
                             if(valueObj.Value && valueObj.Value.Value && valueObj.Value.Name){
-                                valueObj.Value = valueObj.Value.Name
+                                valueObj.Value = valueObj.Value.Value; // .Name
                                 //console.log("WORKAROUND ENUM NEW ENTRY")
                                 //console.log(valueObj)
                             }

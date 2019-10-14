@@ -9,6 +9,7 @@ var start = function() {
     var admin_routes = require(appRoot + '/routes/admin-routes');
     var user_routes = require(appRoot + '/routes/user-routes');
     var public_routes = require(appRoot + '/routes/public-routes');
+    var api_routes = require(appRoot + '/routes/api-routes');
     var app = express();
 
     // WebSocket
@@ -25,6 +26,7 @@ var start = function() {
 
     // Archivos de rutas
     app.use('/', public_routes);
+    app.use('/api', api_routes);
     app.use('/ws', ws_routes);
     app.use('/user', user_routes);
     app.use('/admin', admin_routes);
