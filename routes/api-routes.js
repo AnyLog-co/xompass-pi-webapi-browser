@@ -3,21 +3,42 @@ var router = express.Router();
 var interf = require('../modules/interface2');
 
 router.get('/af_sync', function (req, res) {
-    if(req.query.db || req.query.dbid){
-        interf.getAllFromAF(req.query.db || req.query.dbid, ()=>{
-            res.send("Sync Done!");
+    if(req.query.dbid){
+        interf.getAllFromAF(req.query.dbid, ()=>{
+            res.send(srvPiConfig);
         })
     }else{
         res.send("Invalid Request");
     }
 });
 
+router.get('/af_list', function (req, res) {
+    interf.getAssetServers(function(asWebId, totalAssetServers){
+        res.send(srvPiConfig.assetServers);
+    });
+});
+
+router.get('/af_databases', function (req, res) {
+    if(req.query.afid){    
+        console.log(req.query.afid)
+        let asWebId = srvPiConfig.idToWebId[req.query.afid];
+        console.log(asWebId)
+        if(asWebId)
+            interf.getDataBases2(asWebId, function(dbWebId, totalDBs){
+                res.send(srvPiConfig.assetDBs)
+            });
+    }else{
+        res.send("Invalid Request");
+    }
+});
+
+
 router.get('/get_element_list', function (req, res) {
     if(req.query.op && req.query.qid){
         res.send(srvPiConfig.elements);
         let date = new Date().getTime();
         let filename = req.query.op+'elist.'+date+'.'+req.query.qid+'.json';
-        freader.saveFile2(filename, JSON.stringify(srvPiConfig.elements, null, '\t'));
+        //freader.saveFile2(filename, JSON.stringify(srvPiConfig.elements, null, '\t'));
         console.log("Done GET /get_element_list, Output: " + filename)
     }else{
         res.send("Invalid Request");
@@ -29,7 +50,7 @@ router.get('/get_sensors_list', function (req, res) {
         interf.getAllAttributes(function(){   
             let date = new Date().getTime();
             let filename = req.query.op+'slist.'+date+'.'+req.query.qid+'.json';
-            freader.saveFile2(filename, JSON.stringify(srvPiConfig.attributes, null, '\t'));
+            //freader.saveFile2(filename, JSON.stringify(srvPiConfig.attributes, null, '\t'));
             console.log("Done GET /get_sensors_list, Output: " + filename)
             res.send(srvPiConfig.attributes);
         });
@@ -43,7 +64,7 @@ router.get('/get_element_info', function (req, res) {
         let element = srvPiConfig.elements[req.query.eid]
         let date = new Date().getTime();
         let filename = req.query.op+'einfo.'+element.Name+'.'+date+'.'+req.query.qid+'.json';
-        freader.saveFile2(filename, JSON.stringify(element, null, '\t'));
+        //freader.saveFile2(filename, JSON.stringify(element, null, '\t'));
         console.log("Done GET /get_element_info, Output: " + filename)
         res.send(element);
     }else{
@@ -56,7 +77,7 @@ router.get('/get_sensor_info', function (req, res) {
         let attribute = srvPiConfig.attributes[req.query.sid]
         let date = new Date().getTime();
         let filename = req.query.op+'sinfo.'+attribute.Name+'.'+date+'.'+req.query.qid+'.json';
-        freader.saveFile2(filename, JSON.stringify(attribute, null, '\t'));
+        //freader.saveFile2(filename, JSON.stringify(attribute, null, '\t'));
         console.log("Done GET /get_sensor_info, Output: " + filename)
         res.send(attribute);
     }else{
@@ -80,7 +101,7 @@ router.get('/get_sensors_in_element', function (req, res) {
 
             let filename = req.query.op+'esensors.'+srvPiConfig.elements[req.query.eid].Name+'.'+date+'.'+req.query.qid+'.json';
 
-            freader.saveFile2(filename, JSON.stringify(allAtts, null, '\t'));
+            //freader.saveFile2(filename, JSON.stringify(allAtts, null, '\t'));
             res.send(allAtts);
             console.log("Done GET /get_sensors_in_element, Output: " + filename)
         });

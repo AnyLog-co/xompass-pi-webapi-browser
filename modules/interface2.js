@@ -90,20 +90,24 @@ getAssetServers = function (callback){
         if(jsonbody.Items)
             totalAssetServers = jsonbody.Items.length;
             jsonbody.Items.forEach(function(element) {
+                if(element.Links)
+                    delete element.Links
                 srvPiConfig.assetServers[element.Id] = element;
                 srvPiConfig.elements[element.Id] = element; //TODO: VERIFY
                 srvPiConfig.webIds[element.WebId] = element.Id;
                 srvPiConfig.idToWebId[element.Id] = element.WebId;
-                callback(srvPiConfig.assetServers[element.Id].WebId, totalAssetServers);
+                totalAssetServers--;
+                if(totalAssetServers == 0)
+                    callback(srvPiConfig.assetServers[element.Id].WebId, totalAssetServers);
             });
     }, function(err){
         console.log(err);
     });
 };
 
-var waitingDBs = 0;
 getDataBases = function (webId, dbNameOrId, callback){
     getFromApi(getBaseUri() + 'assetservers/' + webId + '/assetdatabases', function(response, jsonbody){
+        let totalDBs = 0;
         if(jsonbody && jsonbody.Items)
             totalDBs = jsonbody.Items.length;
         else{
@@ -120,6 +124,33 @@ getDataBases = function (webId, dbNameOrId, callback){
                 srvPiConfig.idToWebId[element.Id] = element.WebId;
                 if(element.Links)
                     delete element.Links;
+                callback(srvPiConfig.assetDBs[element.Id].WebId, totalDBs);
+            }
+        });
+    }, function(err){
+        console.log(err);
+    });
+};
+
+getDataBases2 = function (webId, callback){
+    getFromApi(getBaseUri() + 'assetservers/' + webId + '/assetdatabases', function(response, jsonbody){
+        let totalDBs = 0;
+        if(jsonbody && jsonbody.Items)
+            totalDBs = jsonbody.Items.length;
+        else{
+            console.log("Empty Database in Server: " + srvPiConfig.assetServers[srvPiConfig.webIds[webId]].Name);
+            return;
+        }        
+        jsonbody.Items.forEach(function(element) {
+            srvPiConfig.dbNameToId[element.Name] = element.Id;
+            srvPiConfig.assetDBs[element.Id] = element;
+            srvPiConfig.elements[element.Id] = element; //TODO: VERIFY
+            srvPiConfig.webIds[element.WebId] = element.Id;
+            srvPiConfig.idToWebId[element.Id] = element.WebId;
+            if(element.Links)
+                delete element.Links;
+            totalDBs--;
+            if(totalDBs == 0){
                 callback(srvPiConfig.assetDBs[element.Id].WebId, totalDBs);
             }
         });
@@ -197,15 +228,21 @@ var recursiveElement = function(dbWebId, url, callback){
         doneItems[dbWebId]++;// Response received
         // Sumo elementos de cada elemento
         jsonbody.Items.forEach(function(element, key) {
+            let newLinks = element.Links;
+            if(element.Links){
+                delete element.Links
+            }
             element.dbName = element.Path.split("\\")[3];
             srvPiConfig.elements[element.Id] = element;
             srvPiConfig.webIds[element.WebId] = element.Id;
             srvPiConfig.idToWebId[element.Id] = element.WebId;
             console.log("Current Element:"+element.Path)
             console.log("Total Elements:"+totalElements[dbWebId] + " Done Elements: " + doneItems[dbWebId])
-
+            
+            if(element.WebId)
+                delete element.WebId
             if(element.HasChildren == true){
-                recursiveElement(dbWebId, element.Links.Elements, callback)
+                recursiveElement(dbWebId, newLinks.Elements, callback)
             }
             else
                 callback();// Es un fin del arbol
@@ -229,6 +266,10 @@ getAllElementsOfDB = function (webId, callback){
         doneItems[webId] = 0;
         // Si es que no hay Items es porque no existen elementos
         jsonbody.Items.forEach(function(element, key) {
+            let newLinks = element.Links;
+            if(element.Links){
+                delete element.Links
+            }
             element.dbName = element.Path.split("\\")[3];
             srvPiConfig.elements[element.Id] = element;
             srvPiConfig.webIds[element.WebId] = element.Id;
@@ -236,10 +277,13 @@ getAllElementsOfDB = function (webId, callback){
 
             console.log("Current Element:"+element.Path)
             console.log("Total Elements:"+totalElements[webId] + " Done Elements: " + doneItems[webId])
-
-            if(element.Links && element.Links.Elements){
+            
+            if(element.WebId)
+                delete element.WebId
+                
+            if(newLinks && newLinks.Elements){
                 if(element.HasChildren == true){
-                    recursiveElement(webId, element.Links.Elements, function(){
+                    recursiveElement(webId, newLinks.Elements, function(){
                         doneItems[webId]++;
                         if(doneItems[webId] == totalElements[webId]){
                             console.log("Total Elements:"+totalElements[webId] + " Done Elements: " + doneItems[webId])
@@ -397,11 +441,11 @@ getAllAttributes = function(callback){
 };
 
 
-getAllFromAF = function(dbNameOrId, callback){
+getAllFromAF = function(af_dbid, callback){
     srvPiConfig = initialPiconfig;
     getAssetServers(function(asWebId, totalAssetServers){
         console.log("Asset Servers: " + totalAssetServers)
-        getDataBases(asWebId, dbNameOrId, function(dbWebId, totalDBs){
+        getDataBases(asWebId, af_dbid, function(dbWebId, totalDBs){
             console.log("Databases Found: " + totalDBs);
             getAllElementsOfDB(dbWebId, function(){
                 console.log("Final callback");
@@ -416,6 +460,7 @@ getAllFromAF = function(dbNameOrId, callback){
 
 exports.genElementTree = genElementTree;
 exports.getBaseUri = getBaseUri;
+exports.getDataBases2 = getDataBases2;
 exports.getAllFromAF = getAllFromAF;
 exports.getAssetServers = getAssetServers;
 exports.getFromApi = getFromApi;
