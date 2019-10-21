@@ -1,6 +1,8 @@
 import requests
 import time
 
+# Rememebr to Run the node.js service first with npm start. (remember to do "npm install" before first start)
+
 # GET List of AFs
 URL = 'http://localhost:7400/api/af_list'
 r = requests.get(url = URL) 
