@@ -489,8 +489,29 @@ getSensorDataSingle = function (webId, time, callback){
 
     let attributeCount = 0;
     let attributesChecked = 0;
-    let params = `?webId=${webId}&time=${time}&selectedFields=Items.Value.Timestamp;Items.Value.Value,Items.Timestamp`;
+    let params = `?webId=${webId}&time=${time}&selectedFields=Items.Value.Timestamp;Items.Value.Value;`;
     let url = getBaseUri() + 'streamsets/value'+params;
+    //let params = `?time=${time}&selectedFields=Items.Value.Timestamp;Items.Value.Value;Items.Timestamp`;
+    //let url = getBaseUri() + 'streamsets/' + webId + '/recordedattime'+params;
+    console.log(url)
+    //getFromApi(getBaseUri() + '/streamsets/' + webId + '/recordedattimes'+params, function(response, jsonbody){
+    getFromApi(url, function(response, jsonbody){
+        console.log(response.body);
+        callback(jsonbody);
+    }, function(err){
+        console.log(err);
+    });
+};
+
+// Typos de summary: https://techsupport.osisoft.com/Documentation/PI-Web-API/help/topics/summary-type.html
+getSensorDataSummary = function (webId, startTime, endTime, grouptime, summaryType, callback){
+
+    let attributeCount = 0;
+    let attributesChecked = 0;
+    //let params = `?webId=${webId}&time=${time}&selectedFields=Items.Value.Timestamp;Items.Value.Value`; //&selectedFields=Items.Value.Timestamp;Items.Value.Value
+    let params = `?startTime=${startTime}&endTime=${endTime}&summaryType=${summaryType}&summaryDuration=${grouptime}&selectedFields=Items.Value.Timestamp;Items.Value.Value`;
+    //let url = getBaseUri() + 'streamsets/value'+params;
+    let url = getBaseUri() + 'streams/' + webId + '/summary'+params; // se permite tambien un summary
     console.log(url)
     //getFromApi(getBaseUri() + '/streamsets/' + webId + '/recordedattimes'+params, function(response, jsonbody){
     getFromApi(url, function(response, jsonbody){
@@ -503,6 +524,7 @@ getSensorDataSingle = function (webId, time, callback){
 
 exports.getSensorDataSingle = getSensorDataSingle;
 exports.getSensorData = getSensorData;
+exports.getSensorDataSummary = getSensorDataSummary;
 exports.genElementTree = genElementTree;
 exports.getBaseUri = getBaseUri;
 exports.getDataBases2 = getDataBases2;

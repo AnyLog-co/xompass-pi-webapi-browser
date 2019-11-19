@@ -109,6 +109,19 @@ router.get('/get_sensor_data', function (req, res) {
     }
 });
 
+router.get('/get_sensor_data_summary', function (req, res) {
+    if(req.query.sid && req.query.stime && req.query.etime && req.query.summtype && req.query.grouptime){
+        let swebId = srvPiConfig.idToWebId[req.query.sid];
+        interf.getSensorDataSummary(swebId, req.query.stime,req.query.etime,req.query.grouptime, req.query.summtype, function(data){
+            if(data){
+                res.send(data);
+            }
+        })
+    }else{
+        res.send("Invalid Request");
+    }
+});
+
 router.get('/get_sensor_data_range', function (req, res) {
     if(req.query.sid && req.query.stime && req.query.etime){
         let swebId = srvPiConfig.idToWebId[req.query.sid];
