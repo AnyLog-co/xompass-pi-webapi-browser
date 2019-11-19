@@ -6,6 +6,7 @@ router.get('/af_sync', function (req, res) {
     if(req.query.dbid){
         interf.getAllFromAF(req.query.dbid, ()=>{
             res.send(srvPiConfig);
+            freader.saveFile('server_pi_config.json', JSON.stringify(srvPiConfig, null, '\t'));
         })
     }else{
         res.send("Invalid Request");
@@ -87,8 +88,8 @@ router.get('/get_sensors_in_element', function (req, res) {
                 allAtts[aid] = srvPiConfig.attributes[aid];
             }
 
-            //freader.saveFile2(filename, JSON.stringify(allAtts, null, '\t'));
             res.send(allAtts);
+            freader.saveFile('server_pi_config.json', JSON.stringify(srvPiConfig, null, '\t'));
         });
     }else{
         res.send("Invalid Request");
