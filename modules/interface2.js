@@ -522,6 +522,34 @@ getSensorDataSummary = function (webId, startTime, endTime, grouptime, summaryTy
     });
 };
 
+getSearchQuery = function ( q, scope, fields, count, start, callback){
+
+    let attributeCount = 0;
+    let attributesChecked = 0;
+    //let params = `?webId=${webId}&time=${time}&selectedFields=Items.Value.Timestamp;Items.Value.Value`; //&selectedFields=Items.Value.Timestamp;Items.Value.Value
+    
+    let params = `?q=${q}`
+    if(scope)
+        params +=`&scope=${scope}`
+    if(fields)
+        params +=`&fields=${fields}`
+    if(count)
+        params +=`&count=${count}`
+    if(start)
+        params +=`&start=${start}`
+    //let url = getBaseUri() + 'streamsets/value'+params;
+    let url = getBaseUri() + 'search/query'+params; // se permite tambien un summary
+    console.log(url)
+    //getFromApi(getBaseUri() + '/streamsets/' + webId + '/recordedattimes'+params, function(response, jsonbody){
+    getFromApi(url, function(response, jsonbody){
+        console.log(response.body);
+        callback(jsonbody);
+    }, function(err){
+        console.log(err);
+    });
+};
+
+exports.getSearchQuery = getSearchQuery;
 exports.getSensorDataSingle = getSensorDataSingle;
 exports.getSensorData = getSensorData;
 exports.getSensorDataSummary = getSensorDataSummary;

@@ -135,4 +135,16 @@ router.get('/get_sensor_data_range', function (req, res) {
     }
 });
 
+router.get('/search', function (req, res) {
+    if(req.query.q){
+        interf.getSearchQuery(req.query.q, req.query.scope, req.query.fields, req.query.count,req.query.start, function(data){
+            if(data){
+                res.send(data);
+            }
+        })
+    }else{
+        res.send("Invalid Request");
+    }
+});
+
 module.exports = router;
