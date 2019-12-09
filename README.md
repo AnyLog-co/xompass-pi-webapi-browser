@@ -44,3 +44,19 @@ WebAPI must have Basic Authenticaiton Enabled
 * Cleaning in general
 * Add authentication, ideally with Azure Active Directory
 * Bring important logs to the frontend (replace console.logs on backend by wsockets.log to send the logs to the webpage and improve debugging)
+
+## Support
+The support scripts (VPN and bkup_config_files) contain different scripts in order to provide support to get data from Xompass to AnyLog. 
+
+### VPN 
+* Install [OpenVPN](https://www.ovpn.com/en/guides/ubuntu-cli) - `sudo bash $HOME/xompass-pi-webapi-browser/support/install_vpn.sh ${instance_user_name} ${instance_user_password}` 
+* Start VPN (Needed only after a reboot of instance) - `sudo bash $HOME/xompass-pi-webapi-browswer/support/run_vpn.sh` 
+
+### Config Files 
+* [default_config_files](bkup_config_files/default_config_files) contains the default configuration for Xompass 
+`cp -r $HOME/xompass-pi-webapi-browser/bkup_config_files/default_config_files/* $HOME/config_files/`
+
+* [lsl_config_files](bkup_config_files/lsl_config_files) contains the configuration to get data from Lite San Leandro 
+
+`cp -r $HOME/xompass-pi-webapi-browser/bkup_config_files/lsl_config_files/* $HOME/config_files/` 
+
