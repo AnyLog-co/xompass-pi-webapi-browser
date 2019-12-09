@@ -1,0 +1,16 @@
+#===============================================================
+# Code to start env with proper file struct & tcp server running
+#=============================================================== 
+# proocess $HOME/pi-download/demo_scrip_outts/cloud_demo/init_env.anylog  
+
+# Set IPs 
+ip = 172.0.1.7                            # IP address for in-bound. on AWS that would be Public DNS (IPv4) while for Azure it's the private IP 
+ip_out =  52.177.1.99 # IP address for out-bound. For both AWS & Azure that would be tthe Public DNS (IPv4) 
+anylog_server_port = 2048
+
+# Start UDP server  
+run udp server !ip !anylog_server_port 
+
+# set node_name
+node_name = Operator_Node
+

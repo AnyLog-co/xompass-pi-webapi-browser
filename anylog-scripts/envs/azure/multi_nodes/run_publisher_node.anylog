@@ -1,0 +1,53 @@
+#print !table_name
+  
+operators = blockchain get "operator" { "dbms_name" : !dbms_name }
+ips_ports = from !operators bring ['operator']['ip'] ":" ['operator']['port'] seperator = ","
+
+
+goto new_table
+
+:send_data:     # send data to operators
+
+
+run client (!ips_ports) copy !sensor_data !sensor_data # transfer the file to the Operator node
+
+run client (!ips_ports) "system mv " + !sensor_data + " " + !dest_directory  # move the data to be loaded on the IN directory on th operator node
+
+file delete !sensor_data                                       # delete the transferred file
+
+goto start_process
+
+# ------------------------------------------------
+# ERROR - move file to error directory
+# ------------------------------------------------
+:on error:
+
+system mv !sensor_data !err_directory
+
+goto start_process
+
+# ------------------------------------------------
+# New Table - create table if does not exists
+# ------------------------------------------------
+:new_table:
+
+table_info = blockchain get "table" { "table_name" : !table_name,  "dbms_name" : !dbms_name}
+
+if !table_info then goto send_data
+
+# create new table
+
+sql_create = suggest create !sensor_data                              # suggest a table structure based on the JSON file
+
+table_info = {"table" : {
+    "id" : "0x0cd62a4E877344656F489773ffaEBF687952FC65bc3",
+    "dbms_name" : !db_name,
+    "table_name" : !table_name
+    }
+}
+
+blockchain add !table_info
+
+run client (!ips_ports) sql + " " + !dbms_name + " text " + !sql_create     # send create to contractor
+
+goto send_data

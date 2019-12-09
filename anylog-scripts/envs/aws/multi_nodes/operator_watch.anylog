@@ -1,0 +1,36 @@
+
+# ================================================================
+#       Operator Process
+# Places a watch on $HOME/AnyLog-demo/data/publisher/in
+# When a file enters - do the following:
+# 1.  change to SQL
+# 2.  Move to load directory
+# 3.  Load the file
+# ================================================================
+# process $HOME/AnyLog-demo/tests/scripts/script_operator_watch.anylog
+
+
+sensor_data = directory !watch_directory get file &                     # get the first file
+
+table_name = python !sensor_data.split('.')[-2] &                    # get the table name fom the file name
+
+db_name = python !sensor_data.split('/')[-1].split('.')[0] & 
+
+generate insert from json !db_name 0 !sensor_data !contractor_sql_in &  # create INSERT (1 table multi-row)
+
+sql_file = directory !contractor_sql_in get file & 
+
+
+sql !db_name file !sql_file    &                # execute INSERT
+
+file delete !sensor_data       &                # delete the JSON file
+file delete !sql_file       &                # delete the SQL file
+
+
+repeat
+
+
+print *** Operator Watch Started ***
+
+# sql !db_name text  "SELECT COUNT(*) FROM cpu_sensor;"      # execute query
+

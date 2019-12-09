@@ -1,0 +1,20 @@
+# ================================================================
+#       Configuration shared by all participating nodes
+#
+# ================================================================
+# process $HOME/pi-download/anylog_connector/multi_nodes/config_all.anylog
+
+# Public DNS (IPv4) addresses 
+operator_ip = ec2-3-18-5-140.us-east-2.compute.amazonaws.com
+query_publisher_ip = ec2-52-14-100-82.us-east-2.compute.amazonaws.com
+
+db_name = lsl_demo
+
+blockchain_file = $HOME/AnyLog-demo/data/blockchain/blockchain.txt
+publisher_in  = $HOME/AnyLog-demo/data/publisher/in 
+publisher_out = $HOME/AnyLog-demo/data/publisher/out 
+contractor_json_in  = $HOME/AnyLog-demo/data/contractor/json_in
+contractor_json_out = $HOME/AnyLog-demo/data/contractor/json_out
+contractor_sql_in  = $HOME/AnyLog-demo/data/contractor/sql_in
+contractor_sql_out = $HOME/AnyLog-demo/data/contractor/sql_out
+

@@ -1,0 +1,9 @@
+# Configure IP/Port for each node 
+operator_ip_port = !operator_ip + " " + !anylog_server_port
+
+connect dbms psql !db_user !db_port system_query 
+
+selected_operator = blockchain get "operator" {"SLA" : "5"}
+ips_ports = from !selected_operator bring ['operator']['ip'] ":" ['operator']['port'] seperator = " "
+print !ips_ports
+

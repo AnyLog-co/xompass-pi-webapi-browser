@@ -1,0 +1,21 @@
+# ================================================================
+#       Operator - The Demo Scripts
+# Process the scripts to execute the demo on the Operators Nodes
+#
+# ================================================================
+# process $HOME/AnyLog-demo/tests/scripts/script_main_operator.anylog
+# server ip: 10.0.0.124 -- 127.16.12.135
+# process $HOME/AnyLog-demo/tests/scripts/script_reset.anylog
+
+
+#1 - Set the configurations
+
+process $HOME/pi-download/anylog_connector/multi_nodes/config_all.anylog
+process $HOME/pi-download/anylog_connector/multi_nodes/operator_config.anylog
+
+print Step 1 *** Configurations - Done ***
+
+#2 - Set watch diectory on $HOME/AnyLog-demo/data/publisher/in   -  load files placed on this dir to dbms
+process $HOME/pi-download/anylog_connector/multi_nodes/operator_watch.anylog
+
+print Step 2 *** Operator Script Processed ***

@@ -1,0 +1,55 @@
+#===============================================================
+# Code to start env with proper file struct  tcp server running
+#=============================================================== 
+# proocess $HOME/pi-download/demo_scripts/single_node/init_env.anylog 
+
+# Params
+ip = 172.0.1.10
+ip_out = anylog2.eastus2.cloudapp.azure.com
+anylog_rest_port = 2049 
+system echo "Set Params"
+node_name = single_node
+db_name = lsl_demo
+
+blockchain_file = $HOME/AnyLog-demo/data/blockchain/blockchain.txt
+publisher_in  = $HOME/AnyLog-demo/data/publisher/in
+publisher_out = $HOME/AnyLog-demo/data/publisher/out
+contractor_json_in  = $HOME/AnyLog-demo/data/contractor/json_in
+contractor_json_out = $HOME/AnyLog-demo/data/contractor/json_out
+contractor_sql_in  = $HOME/AnyLog-demo/data/contractor/sql_in
+contractor_sql_out = $HOME/AnyLog-demo/data/contractor/sql_out
+watch_directory = $HOME/AnyLog-demo/data/contractor/json_in
+created_table = false 
+
+# Start TCP server  
+system echo "Start TCP and REST servers" 
+run tcp server !ip !anylog_server_port 
+run rest server !ip !anylog_rest_port 
+
+# Connect to database 
+system echo "connect to database" 
+connect dbms psql !db_user !db_port system_query
+connect dbms psql !db_user !db_port !db_name 
+
+# Blockchain 
+system echo "Set blockchain" 
+file_available = file test !blockchain_file
+if !file_available == False then process $HOME/pi-download/anylog_connector/single_node/publish_operator.anylog
+selected_operator = blockchain get "operator" {"SLA" : "5"}
+!selected_operator
+ips_ports = from !selected_operator bring ['operator']['ip'] ":" ['operator']['port'] seperator = " "
+!ips_ports 
+
+# Generate data 
+system echo "generate data" 
+
+sensor_file = directory !publisher_in get file &
+table_name = python !sensor_file.split(".")[2].lower() &
+create_table = blockchain get "table" {"name" : !table_name}  &
+if not !create_table then process $HOME/pi-download/anylog_connector/single_node/new_table.anylog &
+generate insert from json !db_name 0 !sensor_file !contractor_sql_in &
+insert_file = directory !contractor_sql_in get file &
+sql !db_name file !insert_file &
+system mv !sensor_file !publisher_out &
+system mv !insert_file !contractor_sql_out & 
+repeat 

@@ -1,0 +1,21 @@
+# ================================================================
+#       Configuration shared by all participating nodes
+#
+# ================================================================
+# process $HOME/pi-download/anylog_connector/multi_nodes/config_all.anylog
+
+# Public DNS (IPv4) addresses 
+operator_ip = 45.56.114.54
+query_publisher_ip = 45.79.96.35
+
+db_name = lsl_demo
+
+blockchain_file = $HOME/AnyLog-Network/data/blockchain/blockchain.txt
+publisher_in  = $HOME/AnyLog-Network/data/publisher/in 
+publisher_out = $HOME/AnyLog-Network/data/publisher/out 
+contractor_json_in  = $HOME/AnyLog-Network/data/contractor/json_in
+contractor_json_out = $HOME/AnyLog-Network/data/contractor/json_out
+contractor_sql_in  = $HOME/AnyLog-Network/data/contractor/sql_in
+contractor_sql_out = $HOME/AnyLog-Network/data/contractor/sql_out
+error_json = $HOME/AnyLog-Network/data/error/json 
+error_sql = $HOME/AnyLog-Network/data/error/sql 

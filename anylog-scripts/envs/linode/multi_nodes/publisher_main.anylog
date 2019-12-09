@@ -1,0 +1,43 @@
+# ================================================================
+#       Process a file by:
+# 1) Read a file from a watch directory
+# 2) If the table does not exist -> create the table
+# 3) Send the file to the operator
+# ================================================================
+# process $HOME/pi-download/anylog_connector/multi_nodes/publisher_main.anylog
+
+# setup
+process $HOME/pi-download/anylog_connector/multi_nodes/config_all.anylog
+work_directory = $HOME/AnyLog-Network/data/publisher/in
+script_create_table = $HOME/pi-download/anylog_connector/multi_nodes/new_table.anylog
+
+# Fetch a new file
+sensor_file = directory !work_directory get file   &    # get a file from the work directory
+
+# Get the operators marked with SLA #5
+selected_operator = blockchain get "operator" {"SLA" : "5"} &
+
+# Get the list of the IPs and ports
+ips_ports = from !selected_operator bring ['operator']['ip'] ":" ['operator']['port'] seperator = " " &
+
+table_name = string !sensor_file .rsplit('.',2)[1]   &    # get the table name fom the file name and set in dictionary
+
+# find if in blockchain
+
+json_data = blockchain get "table" {"name" : !table_name} &
+
+# create a table structure based on the JSON file
+if not !json_data then process !script_create_table &
+
+ # transfer the file to the Operator node
+one_machine = random substr " " !ips_ports &
+
+run client (!one_machine) copy !sensor_file !sensor_file &
+
+run client (!one_machine) "system mv " + !sensor_file + " " + !contractor_json_in &
+
+system mv !sensor_file $HOME/AnyLog-Network/data/publisher/out & 
+
+#file delete !sensor_file &
+
+repeat
