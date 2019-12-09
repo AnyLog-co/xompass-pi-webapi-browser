@@ -54,6 +54,7 @@ The support scripts (VPN and bkup_config_files) contain different scripts in ord
 
 ### Config Files 
 * [default_config_files](bkup_config_files/default_config_files) contains the default configuration for Xompass 
+
 `cp -r $HOME/xompass-pi-webapi-browser/bkup_config_files/default_config_files/* $HOME/config_files/`
 
 * [lsl_config_files](bkup_config_files/lsl_config_files) contains the configuration to get data from Lite San Leandro 
