@@ -27,7 +27,7 @@ class ConvertJSON:
       self.publisher_data_in = publisher_data_in
       self.file_size = file_size
       self.__read_config(json_config_file)
-      self.file_io = FileIO(generate_data_prep, publisher_data_in, file_size, self.sensor_device_type) 
+      self.file_io = FileIO(generate_data_prep, publisher_data_in, file_size, self.sensor_device_type, self.database_name) 
 
    def __read_config(self, config_file:str)->bool: 
       """
@@ -46,6 +46,7 @@ class ConvertJSON:
       if config_values == {}: 
          print("Failed to get configuration - program existing") 
          exit(1) 
+      self.database_name = config_values['database'] 
       self.device_id_column = config_values['device_id_column']
       self.sensor_device_type = config_values['sensor_device_type'] 
       self.name_column = config_values['name_column'] 

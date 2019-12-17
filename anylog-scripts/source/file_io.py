@@ -5,7 +5,8 @@ import sys
 import time 
 
 class FileIO: 
-   def __init__(self, generate_data_prep:str, publisher_data_in:str, file_size:float, sensor_device_type:str): 
+   def __init__(self, generate_data_prep:str, publisher_data_in:str, file_size:float, sensor_device_type:str, database_name:str):
+      self.database_name = database_name 
       self.generate_data_prep = generate_data_prep 
       self.publisher_data_in = publisher_data_in
       self.file_size = self.__convert_file_size(file_size)
@@ -32,7 +33,7 @@ class FileIO:
          if exists get file else return False   
       """
       ret_value = ""
-      file_name = '%s/%s.*.%s_%s.json' % (self.generate_data_prep, sensor_id, name, self.sensor_device_type)
+      file_name = '%s/%s.%s.*.%s_%s.json' % (self.generate_data_prep, self.database_name, sensor_id, name.lower(), self.sensor_device_type)
       try: 
          ret_value = glob.glob(file_name)
       except Exception as e:
@@ -90,7 +91,7 @@ class FileIO:
       :return: 
          if able to create file return name, else return False 
       """
-      file_name = '%s/%s.%s.%s_%s.json' % (self.generate_data_prep, sensor_id, timestamp, sensor_name, self.sensor_device_type)
+      file_name = '%s/%s.%s.%s.%s_%s.json' % (self.generate_data_prep, self.database_name, sensor_id, timestamp, sensor_name.lower(), self.sensor_device_type)
       try: 
          open(file_name, 'w').close()
       except Exception as e: 

@@ -1,4 +1,5 @@
 # Parameters for generating a new file name 
+database : lsl_demo # Database to stoore data in in 
 sensor_device_type : sensor  # Whether the data is of a sensor or a device
 name_column : Name # device or column name (used for table name)
 device_id_column : ParentElement    # Unique ID for device 
