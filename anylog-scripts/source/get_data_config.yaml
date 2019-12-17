@@ -1,0 +1,9 @@
+# Parameters for generating a new file name 
+sensor_device_type : sensor  # Whether the data is of a sensor or a device
+name_column : Name # device or column name (used for table name)
+device_id_column : ParentElement    # Unique ID for device 
+sensor_id_column : WebId            # Unique ID for sensor 
+path_column : Path # Device/sensor path
+timestamp_column : Timestamp # Timestamp of data
+value_column : Value 
+
