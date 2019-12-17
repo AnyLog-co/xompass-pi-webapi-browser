@@ -1,5 +1,0 @@
-process $HOME/pi-download/anylog_connector/multi_nodes/query_main.anylog
-run tcp client(anylog1.eastus2.cloudapp.azure.com 2048) process $HOME/pi-download/anylog_connector/multi_nodes/operator_main.anylog
-process $HOME/pi-download/anylog_connector/multi_nodes/publisher_main.anylog
-
-

@@ -1,8 +1,0 @@
-# ================================================================
-#       Operator Node Configuration
-#
-# ================================================================
-# process $HOME/pi-download/demo_scripts/cloud_demo/script_config_operator.anylog
-
-connect dbms psql !db_user !db_port !db_name                       # connect to dbms
-watch_directory = $HOME/AnyLog-Network/data/contractor/json_in
