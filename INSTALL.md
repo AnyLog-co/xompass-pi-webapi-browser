@@ -2,7 +2,7 @@
 The following document is suppose to help understand how to communicate with the PI Web API
 
 ## VPN 
-[OpenVPN](https://www.ovpn.com/en/guides/) is needed only for Lite San Leandro config, but is not a must for default config.
+[OpenVPN](https://www.ovpn.com/en/guides/) is needed only for Lite San Leandro config (the default install doesn't require OpenVPN)
 
 * [Install OpenVPN on Ubuntu via Command Line](https://www.ovpn.com/en/guides/ubuntu-cli)
 
