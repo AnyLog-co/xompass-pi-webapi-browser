@@ -4,6 +4,7 @@
 
 ## Installation
 * **Install Node.js v6.9+ [Here](https://nodejs.org/en/)**
+* **Install OpenVPN [Here](https://www.ovpn.com/en/guides/)** 
 * **Clone the repository in your favorite directory**
 * ``git clone https://github.com/xompass/xompass-pi-webapi-browser.git``
 * ``cd xompass-pi-webapi-browser``
@@ -45,26 +46,7 @@ WebAPI must have Basic Authenticaiton Enabled
 * Add authentication, ideally with Azure Active Directory
 * Bring important logs to the frontend (replace console.logs on backend by wsockets.log to send the logs to the webpage and improve debugging)
 
-## Support
-The support scripts (VPN and bkup_config_files) contain different scripts in order to provide support to get data from Xompass to AnyLog. 
-
-### Config Files 
-* [default_config_files](bkup_config_files/default_config_files) contains the default configuration for Xompass 
-
-`cp -r $HOME/xompass-pi-webapi-browser/bkup_config_files/default_config_files/* $HOME/config_files/`
-
-* [lsl_config_files](bkup_config_files/lsl_config_files) contains the configuration to get data from Lite San Leandro 
-
-`cp -r $HOME/xompass-pi-webapi-browser/bkup_config_files/lsl_config_files/* $HOME/config_files/` 
-
-
-### VPN 
-VPN is needed only for Lite San Leandro config, but is not a must for default config.  
-* Install [OpenVPN](https://www.ovpn.com/en/guides/ubuntu-cli)
-
-`sudo bash $HOME/xompass-pi-webapi-browser/support/install_vpn.sh ${instance_user_name} ${instance_user_password}` 
-
-* Start VPN (Needed only after a reboot of instance) 
-
-`sudo bash $HOME/xompass-pi-webapi-browswer/support/run_vpn.sh` 
+## Branches 
+* [master](https://github.com/AnyLog-co/xompass-pi-webapi-browser) - The `master` branch uses API calls to communicate with the PI Web via [AnyLog Network](https://github.com/AnyLog-co/AnyLog-Network) 
+* [anylog-live](https://github.com/AnyLog-co/xompass-pi-webapi-browser/tree/anylog-live) - The `anylog-live` branch is currently used for production, storing data in PI as JSON objects to be sent into [AnyLog](https://github.com/AnyLog-co/AnyLog-Network)
 
