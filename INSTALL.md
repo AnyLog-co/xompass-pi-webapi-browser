@@ -1,5 +1,5 @@
 # Install Process 
-The following files are suppose to help understand how to communicate with the PI Web API
+The following document is suppose to help understand how to communicate with the PI Web API
 
 ## VPN 
 [OpenVPN](https://www.ovpn.com/en/guides/) is needed only for Lite San Leandro config, but is not a must for default config.
