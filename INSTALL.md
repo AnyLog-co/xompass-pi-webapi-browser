@@ -4,7 +4,8 @@ The following document is suppose to help understand how to communicate with the
 ## VPN 
 [OpenVPN](https://www.ovpn.com/en/guides/) is needed only for Lite San Leandro config, but is not a must for default config.
 
-* [Install OpenVPN on Ubuntu via Command Line][(https://www.ovpn.com/en/guides/ubuntu-cli)  
+* [Install OpenVPN on Ubuntu via Command Line](https://www.ovpn.com/en/guides/ubuntu-cli)
+
 **Command**: 
 
 `sudo bash $HOME/xompass-pi-webapi-browser/support/install_vpn.sh ${instance_user_name} ${instance_user_password}` 
