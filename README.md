@@ -47,7 +47,6 @@ WebAPI must have Basic Authenticaiton Enabled
 * Bring important logs to the frontend (replace console.logs on backend by wsockets.log to send the logs to the webpage and improve debugging)
 
 ## Branches 
-* [master](https://github.com/AnyLog-co/xompass-pi-webapi-browser) - The `master` branch uses API calls to communicate with the PI Web
-* [anylog-live](https://github.com/AnyLog-co/xompass-pi-webapi-browser/tree/anylog-live) - The `anylog-live` branch is currently used for productio, stroing data in PI as JSON objects to be sent into AnyLog 
-
+* [master](https://github.com/AnyLog-co/xompass-pi-webapi-browser) - The `master` branch uses API calls to communicate with the PI Web via [AnyLog Network](https://github.com/AnyLog-co/AnyLog-Network) 
+* [anylog-live](https://github.com/AnyLog-co/xompass-pi-webapi-browser/tree/anylog-live) - The `anylog-live` branch is currently used for production, storing data in PI as JSON objects to be sent into [AnyLog](https://github.com/AnyLog-co/AnyLog-Network)
 
