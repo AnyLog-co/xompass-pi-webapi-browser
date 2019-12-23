@@ -17,7 +17,7 @@ The following document is suppose to help understand how to communicate with the
 2. Install npm: `sudo apt -y install npm`
 3. Clone Xompass: `git clone https://github.com/AnyLog-co/xompass-pi-webapi-browser` 
 
-### Connecting directly between AnyLog + PI (master node) 
+### Connecting directly between AnyLog + PI Instance (branch: master)  
 Using API calls (via [AnyLog Network](https://github.com/AnyLog-co/AnyLog-Network)) communicate with the PI Web API  
 1. Checkout master (needed whenever `origin/master` is updated): 
 
@@ -36,8 +36,8 @@ Using API calls (via [AnyLog Network](https://github.com/AnyLog-co/AnyLog-Networ
 
 `screen -Sd xompass -m bash -c "cd $HOME/xompass-pi-webapi-browser/ ; npm start"`
 
-### Store data from PI in file (anylog-live) 
-Data generated via PI is stored into $HOME/xompass-pi-webapi-browser/out1. 
+### Store data from PI Instance in file (branch: anylog-live) 
+Data generated via PI Interface is stored into $HOME/xompass-pi-webapi-browser/output_data 
 1. Checkout anylog-live (needed whenever `origin/anylog-live` is updated): 
 
 `cd $HOME/xompass-pi-webapi-browser ; git checkout anylog-live; git pull origin anylog-live ; mkdir -p $HOME/xompass-pi-webapi-browser/output_data` 
