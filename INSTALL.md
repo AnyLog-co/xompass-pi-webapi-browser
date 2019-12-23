@@ -6,16 +6,11 @@ The following document is suppose to help understand how to communicate with the
 
 * [Install OpenVPN on Ubuntu via Command Line](https://www.ovpn.com/en/guides/ubuntu-cli)
 
-**Command**: 
-
 `sudo bash $HOME/xompass-pi-webapi-browser/support/install_vpn.sh ${instance_user_name} ${instance_user_password}` 
 
-**Example**: 
-
-`sudo bash $HOME/xompass-pi-webapi-browser/support/install_vpn.sh anylog demo` 
-
 * Start OpenVPN 
-**Commnad**: `sudo bash $HOME/xompass-pi-webapi-browswer/support/run_vpn.sh`
+
+`sudo bash $HOME/xompass-pi-webapi-browswer/support/run_vpn.sh`
 
 ## Setting Up Xompass 
 1. Make sure port 7400 is open for communication 
