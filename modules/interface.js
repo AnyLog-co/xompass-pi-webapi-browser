@@ -549,6 +549,7 @@ function updateSubs(){
 
 
 exports.genElementTree = genElementTree;
+exports.getDataBases = getDataBases;
 exports.getBaseUri = getBaseUri;
 exports.updateSubs = updateSubs;
 exports.getAllFromApi = getAllFromApi;
