@@ -129,7 +129,7 @@ getDataServers = function (callback){
 };
 
 var waitingAssetServers = 0;
-exports.getAssetServers = function (callback){
+getAssetServers = function (callback){
     getFromApi(getBaseUri() + 'assetservers', function(response, jsonbody){
         console.log(jsonbody)
         if(jsonbody.Items)
@@ -146,7 +146,7 @@ exports.getAssetServers = function (callback){
 };
 
 var waitingDBs = 0;
-exports.getDataBases = function (webId, callback){
+getDataBases = function (webId, callback){
     getFromApi(getBaseUri() + 'assetservers/' + webId + '/assetdatabases', function(response, jsonbody){
         if(jsonbody && jsonbody.Items)
             waitingDBs = jsonbody.Items.length;
@@ -230,7 +230,6 @@ var recursiveElement = function(elementWebId, callback){
     //console.log("rec element")
     getFromApi(getBaseUri() + '/elements/' + elementWebId + '/elements', function(rename, jsonbody){
         unvisitedWithChildren += jsonbody.Items.length;
-        totalElements += jsonbody.Items.length;
         jsonbody.Items.forEach(function(element, key) {
             element.dbName = element.Path.split("\\")[3];
             //console.log(element.dbName)
@@ -240,15 +239,17 @@ var recursiveElement = function(elementWebId, callback){
             if(element.Links)
                 delete element.Links;
             if(element.HasChildren == true){
+                totalElements++;
                 recursiveElement(element.WebId, callback);
             }else{
                 unvisitedWithChildren--;
                 if(unvisitedWithChildren <= 0){
                     waitingForElements = false;
                 }
+                totalElements++;
+                //Callback executed at the end of all request
+                callback(srvPiConfig.elements[element.Id].WebId, srvPiConfig.elements[element.Id].Name);
             }
-            //Callback executed at the end of all request
-            callback(srvPiConfig.elements[element.Id].WebId, srvPiConfig.elements[element.Id].Name);
         });
     }, function(err){
         console.log(err);
@@ -257,14 +258,14 @@ var recursiveElement = function(elementWebId, callback){
 
 var totalElements = 0;
 getAllElements = function (webId, callback){
-    console.log("all elem")
+    console.log("all elem for DB: " + webId)
     // First request for RootElements is different than other requests, thats why is separated recursiveElementFunction.
     waitingForElements = true;
     unvisitedWithChildren = 0; // To avoid problems due to latency, make it think is waiting
     getFromApi(getBaseUri() + '/assetdatabases/' + webId + '/elements', function(response, jsonbody){
         // Initial visiting node value
         unvisitedWithChildren = jsonbody.Items.length;
-        totalElements += jsonbody.Items.length;
+        //totalElements += jsonbody.Items.length;
         jsonbody.Items.forEach(function(element, key) {
             //console.log("checking element:" + JSON.stringify(element, null, '\t'));
             element.dbName = element.Path.split("\\")[3];
@@ -274,6 +275,7 @@ getAllElements = function (webId, callback){
             if(element.Links)
                 delete element.Links;
             if(element.HasChildren == true) {
+                totalElements++;
                 recursiveElement(element.WebId, callback);
             }
             else {
@@ -281,8 +283,9 @@ getAllElements = function (webId, callback){
                 if(unvisitedWithChildren <= 0){
                     waitingForElements = false;
                 }
+                totalElements++;
+                callback(srvPiConfig.elements[element.Id].WebId, srvPiConfig.elements[element.Id].Name);
             }
-            callback(srvPiConfig.elements[element.Id].WebId, srvPiConfig.elements[element.Id].Name);
         });
     }, function(err){
         console.log(err);
@@ -325,56 +328,66 @@ exports.getChildrenElements = function (webId, callback){
 
 
 // Gets attributes from one WebId Element
-var waitingAttributes = 0;
+var completeElements = 0;
 var receivedAttributes = 0;
 getAttributes = function (webId, callback){
 
     let attributeCount = 0;
     let attributesChecked = 0;
-    getFromApi(getBaseUri() + '/elements/' + webId + '/attributes', function(response, jsonbody){
-        if(jsonbody.statusCode != 200 && jsonbody.statusCode != 201){
-            console.log("Error Retrieving Attributes");
-            console.log(jsonbody);
-            callback("");
-            return;
-        }
-        attributeCount = jsonbody.Items.length;
+    if(!webId){
+        return;
+    }
+    else{
+        getFromApi(getBaseUri() + '/elements/' + webId + '/attributes', function(response, jsonbody){
+            if(jsonbody.statusCode != 200 && jsonbody.statusCode != 201){
+                console.log("Error Retrieving Attributes");
+                console.log(webId)
+                console.log(jsonbody);
+                callback("");
+                return;
+            }
+            attributeCount = jsonbody.Items.length;
 
-        if(jsonbody.Items.length == 0){
-            console.log("No Attributes on Element");
-            callback("");
-            return;
-        }
+            if(jsonbody.Items.length == 0){
+                console.log("No Attributes on Element");
+                completeElements++;
+                callback("");
+                return;
+            }
 
-        var elementId = srvPiConfig.webIds[webId];
-        if(!srvPiConfig.webIds[webId])
-            console.log("Get Elements before requesting Attributes");
-        if(srvPiConfig.elements[elementId]){
-            //if(!srvPiConfig.elements[elementId].Attributes)
-            srvPiConfig.elements[elementId].Attributes = [];
-            srvPiConfig.elements[elementId].AttributesLength = jsonbody.Items.length;
-        }
+            var elementId = srvPiConfig.webIds[webId];
+            if(!srvPiConfig.webIds[webId])
+                console.log("Get Elements before requesting Attributes");
+            if(srvPiConfig.elements[elementId]){
+                //if(!srvPiConfig.elements[elementId].Attributes)
+                srvPiConfig.elements[elementId].Attributes = [];
+                srvPiConfig.elements[elementId].AttributesLength = jsonbody.Items.length;
+            }
 
 
-        jsonbody.Items.forEach(function (element, key) {
-            srvPiConfig.attributes[element.Id] = element;
-            srvPiConfig.attributes[element.Id].ParentElement = elementId;
-            srvPiConfig.elements[elementId].Attributes.push(element.Id);
-            srvPiConfig.attPathToId[element.Path] = element.Id;
-            srvPiConfig.webIds[element.WebId] = element.Id;
-            srvPiConfig.idToWebId[element.Id] = element.WebId;
-            if (element.Links)
-                for(link in element.Links)
-                    getAttributes(link.WebId, function(){})
-                delete element.Links;
-            attributesChecked++;
-            //callback(element.Path, --waitingAttributes);
-            if(attributesChecked == attributeCount)
-                callback(element.WebId);
+            jsonbody.Items.forEach(function (element, key) {
+                srvPiConfig.attributes[element.Id] = element;
+                srvPiConfig.attributes[element.Id].ParentElement = elementId;
+                srvPiConfig.elements[elementId].Attributes.push(element.Id);
+                srvPiConfig.attPathToId[element.Path] = element.Id;
+                srvPiConfig.webIds[element.WebId] = element.Id;
+                srvPiConfig.idToWebId[element.Id] = element.WebId;
+                if (element.Links)
+                    for(link in element.Links)
+                        getAttributes(link.WebId, function(){})
+                    delete element.Links;
+                attributesChecked++;
+                //console.log("Atts checked: " + attributesChecked + " attributeCount of element: " + attributeCount)
+                //callback(element.Path, --waitingAttributes);
+                if(attributesChecked == attributeCount){
+                    completeElements++;
+                    callback(element.WebId);
+                }
+            });
+        }, function(err){
+            console.log(err);
         });
-    }, function(err){
-        console.log(err);
-    });
+    }
 };
 
 // Gets attributes from one WebId Attribute
@@ -386,7 +399,7 @@ getAttributeAttributes = function (webId, callback){
         if(jsonbody.statusCode != 200 && jsonbody.statusCode != 201){
             console.log("Error Retrieving AttAttributes");
             console.log(jsonbody);
-            callback("");
+            callback();
             return;
         }
         attributeCount = jsonbody.Items.length;
@@ -399,7 +412,7 @@ getAttributeAttributes = function (webId, callback){
             
         if(jsonbody.Items.length == 0){
             console.log("No Attributes on Attribute");
-            callback("");
+            callback();
             return;
         }else{
             srvPiConfig.attributes[attributeId].HasChildren = true;
@@ -435,6 +448,7 @@ getAttributeAttributes = function (webId, callback){
 // Get all Attributes of all Elements, only if All elements are present
 getAllAttributes = function(){
     console.log("all att")
+    waitingAttributes = 0;
     Object.keys(srvPiConfig.elements).forEach(function(keyName){
         getAttributes(srvPiConfig.elements[keyName].WebId, function(){});
     });
@@ -496,20 +510,28 @@ objtoarray = function(parentNode, parentArray){
     });
 };
 
-
+let elementsChecked=0;
 getAllFromApi = function(callback){
     srvPiConfig = initialPiconfig;
     getAssetServers(function(asWebId, pendingAServers){
         //console.log("Pending AS: " + pendingAServers);
+        completeElements=0;
         getDataBases(asWebId, function(dbWebId, pendingDBs){
-            //console.log("Pending DBs: " + pendingDBs);
+            console.log("getdatabases callback")
             getAllElements(dbWebId, function(elWebId, elName){
+                
+                console.log("getallelements callback")
+                //console.log(Object.keys(srvPiConfig.elements).length);
                 getAttributes(elWebId, function(attName){
-                    //console.log("Pending AttRequests: " + attName)
-                    //console.log("Received Att:" + receivedAttributes + " Total Elements: " + totalElements + " Waiting for Elements: " + waitingForElements)
-                    if(receivedAttributes == totalElements && waitingAttributes == 0){
-                        console.log("Reacquisition of Elements Complete");
-                        callback();
+                    //console.log("Done AttRequests: " + attName)
+                    //console.log(waitingAttributes);
+                    //console.log("Complete Elements: " + completeElements + " Checked Elements: " + elementsChecked)
+                    console.log(" Checked Elements: " + completeElements)
+                    console.log("Total Elements: " + totalElements)
+                    //console.log(elementsChecked)
+                    //console.log(Object.keys(srvPiConfig.elements).length)
+                    if(elementsChecked == Object.keys(srvPiConfig.elements).length){
+                        console.log("DONE")
                     }
                 });
                 //console.log("Element Requested: " + elName);
@@ -527,9 +549,11 @@ function updateSubs(){
 
 
 exports.genElementTree = genElementTree;
+exports.getDataBases = getDataBases;
 exports.getBaseUri = getBaseUri;
 exports.updateSubs = updateSubs;
 exports.getAllFromApi = getAllFromApi;
+exports.getAssetServers = getAssetServers;
 exports.getFromApi = getFromApi;
 exports.getAttributes = getAttributes;
 exports.getAttributeAttributes = getAttributeAttributes;
