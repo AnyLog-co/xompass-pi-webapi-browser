@@ -100,7 +100,7 @@ router.get('/get_sensors_in_element', function (req, res) {
 router.get('/get_sensor_data', function (req, res) {
     if(req.query.sid && req.query.time){
         let swebId = srvPiConfig.idToWebId[req.query.sid];
-        interf.getSensorDataSingle(swebId, req.query.time, function(data){
+        interf.getSensorDataSingle(swebId, req.query.time, req.query.retrievalmode || "Auto", function(data){
             if(data){
                 res.send(data);
             }
