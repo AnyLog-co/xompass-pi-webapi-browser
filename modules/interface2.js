@@ -491,7 +491,7 @@ getSensorDataSingle = function (webId, time,retrievalMode, callback){
     let attributesChecked = 0;
     //let params = `?webId=${webId}&time=${time}`;//&selectedFields=Items.Value.Timestamp;Items.Value.Value;
     //let url = getBaseUri() + 'streamsets/value'+params;
-    let params = `?time=${time}&retrievalMode=${retrievalMode}`;//&selectedFields=Items.Value.Timestamp;Items.Value.Value;Items.Timestamp
+    let params = `?time=${time}&retrievalMode=${retrievalMode}&selectedFields=Items.Value.Timestamp;Items.Value.Value;Items.Timestamp;`;//&selectedFields=Items.Value.Timestamp;Items.Value.Value;Items.Timestamp
     let url = getBaseUri() + 'streams/' + webId + '/recordedattime'+params;
     console.log(url)
     //getFromApi(getBaseUri() + '/streamsets/' + webId + '/recordedattimes'+params, function(response, jsonbody){
