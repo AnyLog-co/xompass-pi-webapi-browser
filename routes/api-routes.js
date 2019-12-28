@@ -117,7 +117,7 @@ router.get('/get_sensor_data_summary', function (req, res) {
         // Convert ids to webids
         let swebId = null;
         if(Array.isArray(req.query.sid)){
-            if(!Array.isArray(req.query.summtype) || req.query.summtype.length != req.query.sid.length){
+            if(!Array.isArray(req.query.summtype)){
                 res.send("You need to specify a SUMMTYPE for each SID");
                 return;
             }

@@ -520,16 +520,23 @@ getSensorDataSummary = function (webId, startTime, endTime, grouptime, summaryTy
         }
 
         for(let i in webId){
-            params += `&webId=${webId[i]}&summaryType=${summaryType[i]}`
+            params += `&webId=${webId[i]}`
         }
-        url = getBaseUri() + 'streamsets/summary'+params;
     }else{
         //let params = `?webId=${webId}&time=${time}&selectedFields=Items.Value.Timestamp;Items.Value.Value`; //&selectedFields=Items.Value.Timestamp;Items.Value.Value
-        params = `?startTime=${startTime}&endTime=${endTime}&summaryType=${summaryType}&summaryDuration=${grouptime}&selectedFields=Items.Value.Timestamp;Items.Value.Value;`;
+        params = `?startTime=${startTime}&endTime=${endTime}&summaryDuration=${grouptime}&webId=${webId}&selectedFields=Items.Name;Items.Items.Type;Items.Items.Value.Timestamp;Items.Items.Value.Value;`;
         //let url = getBaseUri() + 'streamsets/value'+params;
-        url = getBaseUri() + 'streams/' + webId + '/summary'+params; // se permite tambien un summary
         //getFromApi(getBaseUri() + '/streamsets/' + webId + '/recordedattimes'+params, function(response, jsonbody){
     }
+
+    if(Array.isArray(summaryType)){
+        for(let i in summaryType){
+            params += `&summaryType=${summaryType[i]}`
+        }
+    }else{
+        params += `&summaryType=${summaryType}`
+    }
+    url = getBaseUri() + 'streamsets/summary'+params; // se permite tambien un summary
     console.log("QUERY TO SEND: " + url)
     getFromApi(url, function(response, jsonbody){
         console.log(response.body);
