@@ -55,41 +55,40 @@ def test_pi(host, port):
         af_db_data = r.json()
         print("AF_DATABASES: ")
         print(af_db_data)
-        print(list(af_db_data.keys())[1])
         # Sync with one database - 'dee1a62d-9eac-4945-82e1-4a1e9baa9d8e'
-        PARAMS = {'dbid': list(af_db_data.keys())[1]}  # get the first key of elements and pass it as url parameter
+        PARAMS = {'dbid': list(af_db_data.keys())[2]}  # get the first key of elements and pass it as url parameter
         URL = f'http://{host}:{port}/api/af_sync'
         r = requests.get(url=URL, params=PARAMS)
         print("AF_SYNC: ")
-        data = r.json()
-        print(data)
+        print(r.json())
         # the list of elements in a database
-        PARAMS = {'afid': data[ data_keys[0] ]["Id"]} # get the first key of elements and pass it as url parameter
-        # URL = 'http://%s:%u/api/get_element_list?op=d:\&qid=0' % (host, port)
         URL = f'http://{host}:{port}/api/get_element_list'
-        r = requests.get(url = URL, params=PARAMS)
+        r = requests.get(url = URL)
         af_db_data = r.json()
+        print("GET_ELEMTENT_LIST: ")
         print(af_db_data)
-
         # ---> The example below does not work like before: Example 1 - given an element - attributes names and data type of each attribute
         PARAMS = {'eid': list(af_db_data.keys())[8]} # get the first key of elements and pass it as url parameter
         # URL = 'http://%s:%u/api/get_sensors_in_element?op=d:\&qid=0' % (host, port)
         URL = f'http://{host}:{port}/api/get_sensors_in_element'
         r = requests.get(url = URL, params=PARAMS)
         af_db_attr = r.json()
+        print("GET_SENSORS_IN_ELEMENT: ")
         print(af_db_attr)
 
         # ---> The example ABOVE returned one attribute. It used to return many. The example 2 below used to work (now it fails).
 
         # Example 2 - given a sensor - the readings of the sensor
+        print("GET_SENSORS_DATA SAMPLES: ")
         PARAMS = {'time' : '*-1h', 'sid': list(af_db_attr.keys())[1]} # get the first key of elements and pass it as url parameter
         URL = f'http://{host}:{port}/api/get_sensor_data'
         r = requests.get(url = URL, params=PARAMS)
         af_sensor_reading = r.json()
+        
         print(af_sensor_reading)
         # READING CURRENT TIME
         PARAMS = {'time' : '*', 'sid': list(af_db_attr.keys())[1]} # get the first key of elements and pass it as url parameter
-        URL = f'http://{host}:{port}/api/get_sensor_data' % (host, port)
+        URL = f'http://{host}:{port}/api/get_sensor_data'
         r = requests.get(url = URL, params=PARAMS)
         af_sensor_reading = r.json()
         print(af_sensor_reading)
