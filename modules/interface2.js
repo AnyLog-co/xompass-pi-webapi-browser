@@ -504,16 +504,33 @@ getSensorDataSingle = function (webId, time,retrievalMode, callback){
 };
 
 // Typos de summary: https://techsupport.osisoft.com/Documentation/PI-Web-API/help/topics/summary-type.html
-getSensorDataSummary = function (webId, startTime, endTime, grouptime, summaryType, callback){
+getSensorDataSummary = function (webId, startTime, endTime, grouptime, summaryType,sampleType, sampleInterval, filerExpression, callback){
+    let params = "";
+    let url = "";
+    if(Array.isArray(webId)){
+        params = `?startTime=${startTime}&endTime=${endTime}&summaryDuration=${grouptime}&selectedFields=Items.Name;Items.Items.Type;Items.Items.Value.Timestamp;Items.Items.Value.Value;`;//
+        if(sampleType == "Interval"){
+            params += `&sampleType=${sampleType}`
+            if(sampleInterval){
+                params += `&sampleInterval=${sampleInterval}`
+            }
+        }
+        if(filerExpression){
+            params += `&filerExpression=${filerExpression}`
+        }
 
-    let attributeCount = 0;
-    let attributesChecked = 0;
-    //let params = `?webId=${webId}&time=${time}&selectedFields=Items.Value.Timestamp;Items.Value.Value`; //&selectedFields=Items.Value.Timestamp;Items.Value.Value
-    let params = `?startTime=${startTime}&endTime=${endTime}&summaryType=${summaryType}&summaryDuration=${grouptime}&selectedFields=Items.Value.Timestamp;Items.Value.Value`;
-    //let url = getBaseUri() + 'streamsets/value'+params;
-    let url = getBaseUri() + 'streams/' + webId + '/summary'+params; // se permite tambien un summary
-    console.log(url)
-    //getFromApi(getBaseUri() + '/streamsets/' + webId + '/recordedattimes'+params, function(response, jsonbody){
+        for(let i in webId){
+            params += `&webId=${webId[i]}&summaryType=${summaryType[i]}`
+        }
+        url = getBaseUri() + 'streamsets/summary'+params;
+    }else{
+        //let params = `?webId=${webId}&time=${time}&selectedFields=Items.Value.Timestamp;Items.Value.Value`; //&selectedFields=Items.Value.Timestamp;Items.Value.Value
+        params = `?startTime=${startTime}&endTime=${endTime}&summaryType=${summaryType}&summaryDuration=${grouptime}&selectedFields=Items.Value.Timestamp;Items.Value.Value;`;
+        //let url = getBaseUri() + 'streamsets/value'+params;
+        url = getBaseUri() + 'streams/' + webId + '/summary'+params; // se permite tambien un summary
+        //getFromApi(getBaseUri() + '/streamsets/' + webId + '/recordedattimes'+params, function(response, jsonbody){
+    }
+    console.log("QUERY TO SEND: " + url)
     getFromApi(url, function(response, jsonbody){
         console.log(response.body);
         callback(jsonbody);

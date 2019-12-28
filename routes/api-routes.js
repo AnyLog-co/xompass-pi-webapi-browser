@@ -111,9 +111,29 @@ router.get('/get_sensor_data', function (req, res) {
 });
 
 router.get('/get_sensor_data_summary', function (req, res) {
+    console.log(req)
     if(req.query.sid && req.query.stime && req.query.etime && req.query.summtype && req.query.grouptime){
-        let swebId = srvPiConfig.idToWebId[req.query.sid];
-        interf.getSensorDataSummary(swebId, req.query.stime,req.query.etime,req.query.grouptime, req.query.summtype, function(data){
+        
+        // Convert ids to webids
+        let swebId = null;
+        if(Array.isArray(req.query.sid)){
+            if(!Array.isArray(req.query.summtype) || req.query.summtype.length != req.query.sid.length){
+                res.send("You need to specify a SUMMTYPE for each SID");
+                return;
+            }
+            swebId = [];
+            for(let i in req.query.sid){
+                let sid = req.query.sid[i];
+                if(srvPiConfig.idToWebId[sid]){
+                    swebId.push(srvPiConfig.idToWebId[sid])
+                }
+            }
+            // summtype still an array, but can be workedout inside the sensordatasummary call
+        }else{
+            swebId = srvPiConfig.idToWebId[req.query.sid];
+        }
+
+        interf.getSensorDataSummary(swebId, req.query.stime,req.query.etime,req.query.grouptime, req.query.summtype, req.query.sampleType || "", req.query.sampleInterval, req.query.filerExpression, function(data){
             if(data){
                 res.send(data);
             }
