@@ -5,7 +5,7 @@ var interf = require('../modules/interface2');
 router.get('/af_sync', function (req, res) {
     if(req.query.dbid){
         interf.getAllFromAF(req.query.dbid, ()=>{
-            res.send(srvPiConfig);
+            res.send(srvPiConfig || {});
             freader.saveFile('server_pi_config.json', JSON.stringify(srvPiConfig, null, '\t'));
         })
     }else{
@@ -38,7 +38,7 @@ router.get('/get_element_list', function (req, res) {
     res.send(srvPiConfig.elements);
     let date = new Date().getTime();
     //freader.saveFile2(filename, JSON.stringify(srvPiConfig.elements, null, '\t'));
-    console.log("Done GET /get_element_list, Output: " + filename)
+    console.log("Done GET /get_element_list")
 });
 
 router.get('/get_sensors_list', function (req, res) {

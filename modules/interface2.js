@@ -258,9 +258,8 @@ let doneItems={};
 getAllElementsOfDB = function (webId, callback){
     console.log("all elem for DB: " + webId)
     getFromApi(getBaseUri() + '/assetdatabases/' + webId + '/elements', function(response, jsonbody){
-        if(!jsonbody.Items)
-            return;
-
+        if(!jsonbody.Items || jsonbody.Items.length == 0)
+            callback()
         // Sumo elementos del root
         totalElements[webId] = jsonbody.Items.length;
         doneItems[webId] = 0;
