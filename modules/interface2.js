@@ -485,14 +485,14 @@ getSensorData = function (webId, startTime, endTime, callback){
     });
 };
 
-getSensorDataSingle = function (webId, time, callback){
+getSensorDataSingle = function (webId, time,retrievalMode, callback){
 
     let attributeCount = 0;
     let attributesChecked = 0;
-    let params = `?webId=${webId}&time=${time}&selectedFields=Items.Value.Timestamp;Items.Value.Value;`;
-    let url = getBaseUri() + 'streamsets/value'+params;
-    //let params = `?time=${time}&selectedFields=Items.Value.Timestamp;Items.Value.Value;Items.Timestamp`;
-    //let url = getBaseUri() + 'streamsets/' + webId + '/recordedattime'+params;
+    //let params = `?webId=${webId}&time=${time}`;//&selectedFields=Items.Value.Timestamp;Items.Value.Value;
+    //let url = getBaseUri() + 'streamsets/value'+params;
+    let params = `?time=${time}&retrievalMode=${retrievalMode}&selectedFields=Timestamp;Value;UnitsAbbreviation`;//&selectedFields=Items.Value.Timestamp;Items.Value.Value;Items.Timestamp
+    let url = getBaseUri() + 'streams/' + webId + '/recordedattime'+params;
     console.log(url)
     //getFromApi(getBaseUri() + '/streamsets/' + webId + '/recordedattimes'+params, function(response, jsonbody){
     getFromApi(url, function(response, jsonbody){
