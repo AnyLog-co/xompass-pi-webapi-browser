@@ -95,7 +95,7 @@ class GetData:
       read_data = self.cj.read_data(file_name)
       if not read_data: 
          ret_value = False 
-
+      
       if ret_value == True: # store data to file    
          row = ''.join(read_data).replace("\n","").replace("\t","")
          ret_value = self.cj.store_to_file(row) 

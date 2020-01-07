@@ -4,6 +4,8 @@ import os
 import sys 
 import time 
 
+import convert_systemuptime_sensor_values
+
 class FileIO: 
    def __init__(self, generate_data_prep:str, publisher_data_in:str, file_size:float, sensor_device_type:str, database_name:str):
       self.database_name = database_name 
@@ -60,6 +62,9 @@ class FileIO:
          return -1
 
       if size >= self.file_size: 
+         if 'systemuptime_sensor' in file_name: 
+            convert_systemuptime_sensor_values.update_file(file_name) 
+         print(file_name) 
          return True
       return False 
 

@@ -48,7 +48,6 @@ def convert_value(dict_json:dict):
       datetime_value = datetime.datetime.strptime(datetime.datetime.fromtimestamp(sec_value).strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S')
    except: 
       return False 
-   print(datetime_value)
    try: 
       return datetime_value - datetime.datetime(1970, 1, 1, 0, 0, 0)
    except Exception as e: 
@@ -93,10 +92,10 @@ def convert_value_main(old_json:str)->str:
    elapse_time_no_year = convert_value(dict_json) 
    if not elapse_time_no_year: 
       return old_json 
-   
+  
    # update dict['value'] 
-   dict_json['value'] = elpase_time_year(elapse_time_no_year)
-
+   dict_json['value'] = str(elpase_time_year(elapse_time_no_year))
+   
    # Convert dict back to JSON 
    updated_old_json = __dict_to_json(dict_json)
    if not updated_old_json: 
