@@ -64,7 +64,6 @@ class FileIO:
       if size >= self.file_size: 
          if 'systemuptime_sensor' in file_name: 
             convert_systemuptime_sensor_values.update_file(file_name) 
-         print(file_name) 
          return True
       return False 
 
