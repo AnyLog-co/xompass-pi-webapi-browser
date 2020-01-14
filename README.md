@@ -9,6 +9,7 @@
 * ``cd xompass-pi-webapi-browser``
 * ``npm install``
 * ``npm start``
+* Use Basic Authentication as level 0 or be the only one at Configuration PI Web API / System Configutarion
 
 ## Features
 * Connect to a PI System with the WebAPI
