@@ -1,6 +1,7 @@
 import datetime 
 import glob
 import os
+import shutil
 import sys 
 import time 
 
@@ -67,7 +68,7 @@ class FileIO:
          return True
       return False 
 
-   def move_file(self, file_name:str, new_dir:str)->bool: 
+   def move_file(self, file_name:str, new_dir:str)->bool:
       """
       Move file from generate_data_prep to publisher_data_in
       :args: 
@@ -78,6 +79,13 @@ class FileIO:
       """
       ret_value = True 
       new_dir = os.path.expanduser(os.path.expandvars(new_dir)) 
+      # temp code
+      for dbms in ['lsl_demo2', 'lsl_demo_bkup']: 
+         updated_file_name = new_dir+"/"+file_name.rsplit("/", 1)[-1].replace('lsl_demo', dbms)
+         try: 
+            os.system('cp %s %s' % (file_name, updated_file_name))
+         except:
+            pass 
       try: 
          os.rename(file_name, new_dir+"/"+file_name.rsplit("/", 1)[-1]) 
       except: 

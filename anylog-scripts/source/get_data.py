@@ -135,7 +135,7 @@ class GetData:
          except Exception as e: 
             print("Failed to remove file (%s) - %s" (file_name, e))
             return False 
-         time.sleep(5)
+         time.sleep(1)
 
 def main():
    """
