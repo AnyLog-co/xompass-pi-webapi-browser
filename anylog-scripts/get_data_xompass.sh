@@ -12,8 +12,8 @@ file_size=${2}
 echo "set params" 
 generate_data_prep=${ROOT_DIR}/data/prep 
 publisher_dir_in=${ROOT_DIR}/data/watch 
-#download_directory=$HOME/xompass-pi-webapi-browser/output_data
-download_directory=$HOME/tmp
+download_directory=$HOME/xompass-pi-webapi-browser/output_data
+#download_directory=$HOME/tmp
 config_file=$HOME/xompass-pi-webapi-browser/anylog-scripts/source/get_data_config.yaml
 
 timeout=60

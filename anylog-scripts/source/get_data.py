@@ -117,7 +117,7 @@ class GetData:
          boolean = False
          for i in range(2): 
             try: # Try to find file with data  
-               file_name = self.download_data_dir + "/" + sorted(os.listdir(self.download_data_dir))[0] 
+               file_name = self.download_data_dir + "/" + os.listdir(self.download_data_dir)[0] 
             except: # if there isn't a file wait for 10 sec (repeat 6 times else exit) 
                if boolean == True: 
                   print("No new data found") 
@@ -135,7 +135,7 @@ class GetData:
          except Exception as e: 
             print("Failed to remove file (%s) - %s" (file_name, e))
             return False 
-         time.sleep(1)
+         time.sleep(0.5)
 
 def main():
    """
