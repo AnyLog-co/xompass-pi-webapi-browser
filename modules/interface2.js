@@ -42,6 +42,7 @@ exports.start = function(){
 
 
 function getFromApi(path, successCallback, errorCallback){
+    console.log(path)
     request.get(path, {
         auth: credentials,
         strictSSL: false,
@@ -89,6 +90,7 @@ getAssetServers = function (callback){
     getFromApi(getBaseUri() + 'assetservers', function(response, jsonbody){
         if(jsonbody.Items)
             totalAssetServers = jsonbody.Items.length;
+            console.log("Asset Servers: " + totalAssetServers)
             jsonbody.Items.forEach(function(element) {
                 if(element.Links)
                     delete element.Links
@@ -97,26 +99,22 @@ getAssetServers = function (callback){
                 srvPiConfig.webIds[element.WebId] = element.Id;
                 srvPiConfig.idToWebId[element.Id] = element.WebId;
                 totalAssetServers--;
-                if(totalAssetServers == 0)
-                    callback(srvPiConfig.assetServers[element.Id].WebId, totalAssetServers);
+                //if(totalAssetServers == 0)
+                callback(srvPiConfig.assetServers[element.Id].WebId, totalAssetServers);
             });
     }, function(err){
         console.log(err);
     });
 };
 
-getDataBases = function (webId, dbNameOrId, callback){
+
+getDataBases2 = function (webId,dbid, callback){
     getFromApi(getBaseUri() + 'assetservers/' + webId + '/assetdatabases', function(response, jsonbody){
         let totalDBs = 0;
-        if(jsonbody && jsonbody.Items)
-            totalDBs = jsonbody.Items.length;
-        else{
-            console.log("Empty Database in Server: " + srvPiConfig.assetServers[srvPiConfig.webIds[webId]].Name);
-            return;
-        }
-        jsonbody.Items.forEach(function(element) {
-            if(dbNameOrId == element.Id || element.Id == element.Name){
-                console.log("DB Name or Id match Found for PI DB: " + element.Name);
+        console.log(jsonbody)     
+        if(jsonbody && jsonbody.Items){
+            totalDBs = jsonbody.Items.length;   
+            jsonbody.Items.forEach(function(element) {
                 srvPiConfig.dbNameToId[element.Name] = element.Id;
                 srvPiConfig.assetDBs[element.Id] = element;
                 srvPiConfig.elements[element.Id] = element; //TODO: VERIFY
@@ -124,36 +122,15 @@ getDataBases = function (webId, dbNameOrId, callback){
                 srvPiConfig.idToWebId[element.Id] = element.WebId;
                 if(element.Links)
                     delete element.Links;
-                callback(srvPiConfig.assetDBs[element.Id].WebId, totalDBs);
-            }
-        });
-    }, function(err){
-        console.log(err);
-    });
-};
-
-getDataBases2 = function (webId, callback){
-    getFromApi(getBaseUri() + 'assetservers/' + webId + '/assetdatabases', function(response, jsonbody){
-        let totalDBs = 0;
-        if(jsonbody && jsonbody.Items)
-            totalDBs = jsonbody.Items.length;
+                totalDBs--;
+                if(dbid == element.Id){
+                    callback(srvPiConfig.assetDBs[element.Id].WebId, totalDBs);
+                }
+            });
+        }
         else{
             console.log("Empty Database in Server: " + srvPiConfig.assetServers[srvPiConfig.webIds[webId]].Name);
-            return;
-        }        
-        jsonbody.Items.forEach(function(element) {
-            srvPiConfig.dbNameToId[element.Name] = element.Id;
-            srvPiConfig.assetDBs[element.Id] = element;
-            srvPiConfig.elements[element.Id] = element; //TODO: VERIFY
-            srvPiConfig.webIds[element.WebId] = element.Id;
-            srvPiConfig.idToWebId[element.Id] = element.WebId;
-            if(element.Links)
-                delete element.Links;
-            totalDBs--;
-            if(totalDBs == 0){
-                callback(srvPiConfig.assetDBs[element.Id].WebId, totalDBs);
-            }
-        });
+        }
     }, function(err){
         console.log(err);
     });
@@ -440,17 +417,20 @@ getAllAttributes = function(callback){
 };
 
 
+// Gets all asset servers and all databases inside each one.
+// For each database will check if it is the specified id, then will get all elements inside too.
 getAllFromAF = function(af_dbid, callback){
     srvPiConfig = initialPiconfig;
     getAssetServers(function(asWebId, totalAssetServers){
-        console.log("Asset Servers: " + totalAssetServers)
-        getDataBases(asWebId, af_dbid, function(dbWebId, totalDBs){
-            console.log("Databases Found: " + totalDBs);
+        console.log("Asset Servers webId: " + asWebId)
+        getDataBases2(asWebId, af_dbid, function(dbWebId, totalDBs){
             getAllElementsOfDB(dbWebId, function(){
                 console.log("Final callback");
                 callback();
             });
         });
+    }, function(err){
+        callback(err);
     });
     /*getDataServers(function(dsWebId, pendingDServers){
         console.log("DataServer ok: " + pendingDServers);

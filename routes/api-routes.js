@@ -2,23 +2,14 @@ var express = require('express');
 var router = express.Router();
 var interf = require('../modules/interface2');
 
-router.get('/af_sync', function (req, res) {
-    if(req.query.dbid){
-        interf.getAllFromAF(req.query.dbid, ()=>{
-            res.send(srvPiConfig || {});
-            freader.saveFile('server_pi_config.json', JSON.stringify(srvPiConfig, null, '\t'));
-        })
-    }else{
-        res.send("Invalid Request");
-    }
-});
-
+// get af servers
 router.get('/af_list', function (req, res) {
     interf.getAssetServers(function(asWebId, totalAssetServers){
         res.send(srvPiConfig.assetServers);
     });
 });
 
+// get af instances
 router.get('/af_databases', function (req, res) {
     if(req.query.afid){    
         console.log(req.query.afid)
@@ -33,6 +24,17 @@ router.get('/af_databases', function (req, res) {
     }
 });
 
+
+router.get('/af_sync', function (req, res) {
+    if(req.query.dbid){
+        interf.getAllFromAF(req.query.dbid, ()=>{
+            res.send(srvPiConfig || {});
+            freader.saveFile('server_pi_config.json', JSON.stringify(srvPiConfig, null, '\t'));
+        })
+    }else{
+        res.send("Invalid Request");
+    }
+});
 
 router.get('/get_element_list', function (req, res) {
     res.send(srvPiConfig.elements);
