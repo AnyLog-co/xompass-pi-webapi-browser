@@ -108,7 +108,7 @@ getAssetServers = function (callback){
 };
 
 
-getDataBases2 = function (webId,dbid, callback){
+getDataBases = function (webId,dbid, callback){
     getFromApi(getBaseUri() + 'assetservers/' + webId + '/assetdatabases', function(response, jsonbody){
         let totalDBs = 0;
         console.log(jsonbody)     
@@ -124,6 +124,34 @@ getDataBases2 = function (webId,dbid, callback){
                     delete element.Links;
                 totalDBs--;
                 if(dbid == element.Id){
+                    callback(srvPiConfig.assetDBs[element.Id].WebId, totalDBs);
+                }
+            });
+        }
+        else{
+            console.log("Empty Database in Server: " + srvPiConfig.assetServers[srvPiConfig.webIds[webId]].Name);
+        }
+    }, function(err){
+        console.log(err);
+    });
+};
+
+getDataBases2 = function (webId, callback){
+    getFromApi(getBaseUri() + 'assetservers/' + webId + '/assetdatabases', function(response, jsonbody){
+        let totalDBs = 0;
+        console.log(jsonbody)     
+        if(jsonbody && jsonbody.Items){
+            totalDBs = jsonbody.Items.length;   
+            jsonbody.Items.forEach(function(element) {
+                srvPiConfig.dbNameToId[element.Name] = element.Id;
+                srvPiConfig.assetDBs[element.Id] = element;
+                srvPiConfig.elements[element.Id] = element; //TODO: VERIFY
+                srvPiConfig.webIds[element.WebId] = element.Id;
+                srvPiConfig.idToWebId[element.Id] = element.WebId;
+                if(element.Links)
+                    delete element.Links;
+                totalDBs--;
+                if(totalDBs == 0){
                     callback(srvPiConfig.assetDBs[element.Id].WebId, totalDBs);
                 }
             });
@@ -423,7 +451,7 @@ getAllFromAF = function(af_dbid, callback){
     srvPiConfig = initialPiconfig;
     getAssetServers(function(asWebId, totalAssetServers){
         console.log("Asset Servers webId: " + asWebId)
-        getDataBases2(asWebId, af_dbid, function(dbWebId, totalDBs){
+        getDataBases(asWebId, af_dbid, function(dbWebId, totalDBs){
             getAllElementsOfDB(dbWebId, function(){
                 console.log("Final callback");
                 callback();
