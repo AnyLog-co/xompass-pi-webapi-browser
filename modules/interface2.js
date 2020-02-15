@@ -85,6 +85,31 @@ getDataServers = function (callback){
     });
 };
 
+
+getAllAssetServers = function (callback){
+    var totalAssetServers = 0;
+    getFromApi(getBaseUri() + 'assetservers', function(response, jsonbody){
+        if(jsonbody.Items)
+            totalAssetServers = jsonbody.Items.length;
+            console.log("Asset Servers: " + totalAssetServers)
+            jsonbody.Items.forEach(function(element) {
+                if(element.Links)
+                    delete element.Links
+                srvPiConfig.assetServers[element.Id] = element;
+                srvPiConfig.elements[element.Id] = element; //TODO: VERIFY
+                srvPiConfig.webIds[element.WebId] = element.Id;
+                srvPiConfig.idToWebId[element.Id] = element.WebId;
+                console.log(totalAssetServers);
+                totalAssetServers--;
+                if(totalAssetServers == 0){
+                    callback(srvPiConfig.assetServers[element.Id].WebId, totalAssetServers);
+                }
+            });
+    }, function(err){
+        console.log(err);
+    });
+};
+
 getAssetServers = function (callback){
     var totalAssetServers = 0;
     getFromApi(getBaseUri() + 'assetservers', function(response, jsonbody){
@@ -108,7 +133,8 @@ getAssetServers = function (callback){
 };
 
 
-getDataBases = function (webId,dbid, callback){
+//this get databases and returns immediatly when it finds the specified dbid
+getDataBaseById = function (webId,dbid, callback){
     getFromApi(getBaseUri() + 'assetservers/' + webId + '/assetdatabases', function(response, jsonbody){
         let totalDBs = 0;
         console.log(jsonbody)     
@@ -136,7 +162,8 @@ getDataBases = function (webId,dbid, callback){
     });
 };
 
-getDataBases2 = function (webId, callback){
+//this get databases and returns when read all databases in the list
+getAllDataBases = function (webId, callback){
     getFromApi(getBaseUri() + 'assetservers/' + webId + '/assetdatabases', function(response, jsonbody){
         let totalDBs = 0;
         console.log(jsonbody)     
@@ -451,7 +478,7 @@ getAllFromAF = function(af_dbid, callback){
     srvPiConfig = initialPiconfig;
     getAssetServers(function(asWebId, totalAssetServers){
         console.log("Asset Servers webId: " + asWebId)
-        getDataBases(asWebId, af_dbid, function(dbWebId, totalDBs){
+        getDataBaseById(asWebId, af_dbid, function(dbWebId, totalDBs){
             getAllElementsOfDB(dbWebId, function(){
                 console.log("Final callback");
                 callback();
@@ -586,9 +613,10 @@ exports.getSensorData = getSensorData;
 exports.getSensorDataSummary = getSensorDataSummary;
 exports.genElementTree = genElementTree;
 exports.getBaseUri = getBaseUri;
-exports.getDataBases2 = getDataBases2;
+exports.getAllDataBases = getAllDataBases;
 exports.getAllFromAF = getAllFromAF;
 exports.getAssetServers = getAssetServers;
+exports.getAllAssetServers = getAssetServers;
 exports.getFromApi = getFromApi;
 exports.getAttributes = getAttributes;
 exports.getAllAttributes = getAllAttributes;

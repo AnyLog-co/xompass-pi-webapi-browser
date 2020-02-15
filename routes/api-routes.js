@@ -4,7 +4,7 @@ var interf = require('../modules/interface2');
 
 // get af servers
 router.get('/af_list', function (req, res) {
-    interf.getAssetServers(function(asWebId, totalAssetServers){
+    interf.getAllAssetServers(function(asWebId, totalAssetServers){
         res.send(srvPiConfig.assetServers);
     });
 });
@@ -16,7 +16,7 @@ router.get('/af_databases', function (req, res) {
         let asWebId = srvPiConfig.idToWebId[req.query.afid];
         console.log(asWebId)
         if(asWebId)
-            interf.getDataBases2(asWebId, function(dbWebId, totalDBs){
+            interf.getAllDataBases(asWebId, function(dbWebId, totalDBs){
                 res.send(srvPiConfig.assetDBs)
             });
     }else{
