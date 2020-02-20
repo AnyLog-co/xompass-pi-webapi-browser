@@ -5,6 +5,17 @@ import shutil
 import sys 
 import time 
 
+def read_file(file_name:str)->list:
+   try:
+      with open(file_name, 'r') as f:
+         try:
+            return f.readlines()
+         except Exception as e:
+            print('Failed to read data in %s. (Error: %s)' % (file_name, e))
+            return False
+   except Exception as e:
+      print('Failed to open file %s. (Error: %s)' % (file_name, e))
+      return False
 
 class FileIO: 
    def __init__(self, prep_dir:str, watch_dir:str, file_size:float): 
@@ -130,13 +141,15 @@ class FileIO:
       table_name = file_name.split(".")[2].replace("-", "_").replace(" ", "_").lower()
       timestamp = file_name.split(".")[1]
       device_id = device_id.replace("-", "_").replace(" ", "_") 
-      file_list = self.check_if_file_exists(dbms, table_name, device_id) 
-      if len(file_list) > 0: 
+      file_name = self.check_if_file_exists(dbms, table_name, device_id) 
+      if len(file_name) > 0: 
          if self.check_file_size(file_name) is True: 
             self.move_file(file_name) 
-            file_list = [] 
-      if not file_list: 
+            file_name = [] 
+            file_name = file_list[0] 
+      if not file_name: 
          file_name = self.create_file(dbms, timestamp, table_name, device_id)
+
       return self.write_to_file(file_name, data) 
       
       

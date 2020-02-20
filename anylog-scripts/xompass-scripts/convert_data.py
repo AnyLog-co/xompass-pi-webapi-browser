@@ -1,6 +1,13 @@
 import datetime 
 import json 
+import os 
+import sys 
 import time
+
+xompass_convert_scripts = os.path.expanduser(os.path.expandvars('$HOME/xompass-pi-webapi-browser/anylog-scripts/xompass-scripts'))
+sys.path.insert(0, xompass_convert_scripts)
+
+from file_io import read_file
 
 def __convert_json_to_dict(data:str)->dict: 
    try: 
@@ -16,19 +23,7 @@ def __convert_dict_to_json(data:dict)->str:
       print('Failed to convert dict to JSON. (Error: %s)' % e) 
       return False 
 
-def __read_file(file_name:str)->list: 
-   try:
-      with open(file_name, 'r') as f:
-         try:
-            return f.readlines()
-         except Exception as e:
-            print('Failed to read data in %s. (Error: %s)' % (file_name, e))
-            return False
-   except Exception as e:
-      print('Failed to open file %s. (Error: %s)' % (file_name, e))
-      return False
-
-def convert_xompass_data(file_name:str)->bool:
+def convert_xompass_data(file_name:str)->(list, str):
    """
    Given JSON data from xompass server(s), convert data to be stored in db
    :args: 
@@ -38,20 +33,23 @@ def convert_xompass_data(file_name:str)->bool:
       timestamp:str - using the file name, generate insert timestamp
       file_data:str - data read from file 
    :return: 
-      data_set  
+      if success return list of JSON + device_id 
+      else return empty listt 
    """
    data_set = [] 
+   device_id = '' 
 
    timestamp = file_name.split(".")[1].rsplit("_", 1)[0]
    timestamp = time.mktime(datetime.datetime.strptime(timestamp, "%Y_%m_%d_%H_%M_%S").timetuple())
    timestamp = datetime.datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S') 
 
-   file_data = __read_file(file_name) 
+   file_data = read_file(file_name) 
    if not file_data: 
       return False 
    
    for row in file_data:
-      output_data = {'timestamp': timestamp} 
+      #output_data = {'timestamp': timestamp} 
+      output_data = {} 
       dict_obj = __convert_json_to_dict(row)
       json_obj = False 
       device_id = None 
@@ -65,3 +63,16 @@ def convert_xompass_data(file_name:str)->bool:
          data_set.append(json_obj)
 
    return data_set, device_id
+
+def convert_data(file_name:str, convert_type:str):
+   """
+   Based on convert_type, select conversion formatt 
+   :args: 
+      file_name:str - file to get data from 
+      convert_type:str - conversion format 
+   :return: 
+      if success return list of JSON + device_id 
+      else return empty listt 
+   """
+   if convert_type is 'xompass': 
+      return convert_xompass_data(file_name) 

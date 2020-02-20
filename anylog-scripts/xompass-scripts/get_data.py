@@ -9,11 +9,12 @@ import convert_data
 from file_io import FileIO
 
 class GetData:
-   def __init__(self, rest_dir:str, prep_dir:str, watch_dir:str, file_size:float): 
+   def __init__(self, rest_dir:str, prep_dir:str, watch_dir:str, file_size:float, convert_type:str): 
       self.rest_dir = os.path.expanduser(os.path.expandvars(rest_dir))
       self.prep_dir = os.path.expanduser(os.path.expandvars(prep_dir))
       self.watch_dir = os.path.expanduser(os.path.expandvars(watch_dir))
       self.file_size = file_size 
+      self.convert_type = convert_type 
 
    def validate_dirs(self)->bool: 
       """
@@ -121,7 +122,7 @@ class GetData:
             else: # reset 
                boolean = False
                break
-         data, device_id =  convert_data.convert_xompass_data(file_name) 
+         data, device_id = convert_data.convert_data(file_name, self.convert_type) 
          if not data: 
             return False 
          for row in data: 
@@ -139,13 +140,14 @@ class GetData:
 
 def main(): 
    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-   parser.add_argument('rest_dir',           type=str,   default='$HOME/AnyLog-Network/data/rest', help='directory recieved data') 
-   parser.add_argument('prep_dir',           type=str,   default='$HOME/anyLog-Network/data/prep',  help='directory prep data') 
-   parser.add_argument('watch_dir',          type=str,   default='$HOME/AnyLog-Network/data/watch', help='directorry data ready to be stored') 
-   parser.add_argument('-fs', '--file-size', type=float, default=1,                                 help='file size')  
+   parser.add_argument('rest_dir',              type=str,   default='$HOME/AnyLog-Network/data/rest',  help='directory recieved data') 
+   parser.add_argument('prep_dir',              type=str,   default='$HOME/anyLog-Network/data/prep',  help='directory prep data') 
+   parser.add_argument('watch_dir',             type=str,   default='$HOME/AnyLog-Network/data/watch', help='directorry data ready to be stored') 
+   parser.add_argument('-fs', '--file-size',    type=float, default=1,                                 help='file size')  
+   parser.add_argument('-ct', '--convert-type', type=str,   default='xompass',                         help='type of JSON conversion') 
    args = parser.parse_args()
 
-   gd = GetData(args.rest_dir, args.prep_dir, args.watch_dir, args.file_size) 
+   gd = GetData(args.rest_dir, args.prep_dir, args.watch_dir, args.file_size, args.convert_type) 
    if not gd.validate_dirs(): 
       exit(1) 
    gd.get_data()
