@@ -53,6 +53,8 @@ def convert_xompass_data(file_name:str)->bool:
    for row in file_data:
       output_data = {'timestamp': timestamp} 
       dict_obj = __convert_json_to_dict(row)
+      json_obj = False 
+      device_id = None 
       if dict_obj: 
          device_id = list(dict_obj.keys())[0]
          output_data['device_id'] = device_id 

@@ -32,8 +32,7 @@ class FileIO:
          if exists get file else return False   
       """
       ret_value = ""
-      file_name = '%s/%s.%s.*.%s*.json' % (self.prep_dir, dbms.lower(), device_id.lower(), table_name.lower())
-      print(file_name) 
+      file_name = '%s/%s.%s.*.%s*.json' % (self.prep_dir, dbms, device_id, table_name)
       try:
          ret_value = glob.glob(file_name)
       except Exception as e:
@@ -42,11 +41,102 @@ class FileIO:
 
       if ret_value != False and len(ret_value) > 0:
          ret_value = ret_value[0]
+
       return ret_value
 
-   def file_io(self, file_name:str, device_id:str, data:str): 
-      dbms = file_name.split("/")[-1].split(".")[0] 
-      table_name = file_name.split(".")[2] 
-      file_list = self.check_if_file_exists(dbms, table_name, device_id) 
-      if not file_list: 
+   def create_file(self, dbms:str, timestamp:str, table_name:str, device_id:str)->str:
+      """
+      Create file to store data 
+      :args: 
+         dbms:str - database name 
+         timestamp:str - timestamp for file 
+         table_name:str - table to store data in 
+         device_id:str - device/sensor id 
+      :param: 
+         file_name:str - file to store data in 
+      :return: 
+         file_name 
+      """
+      file_name = '%s/%s.%s.%s.%s.json' % (self.prep_dir, dbms, device_id, timestamp, table_name)
+      try:
+         open(file_name, 'w').close()
+      except Exception as e:
+         print("Unable to create file (%s) - %s" % (self.generate_data_prep, e))
+         return False
 
+      return file_name
+
+   def check_file_size(self, file_name:str)->bool:
+      """
+      Get the size of a given file and check whether or not it has reached max size.
+      :args:
+         if reached max_size (self.file_size) return True
+         if did not reach max size return False
+         if there is an (OSError) when trying to get file size return -1 - this will exist program
+      """
+      try:
+         size = os.path.getsize(file_name)
+      except Exception as e:
+         print("Failed to get file file size for %s - %s" % (file_name, e))
+         return -1
+
+      if size >= self.file_size:
+         if 'systemuptime_sensor' in file_name:
+            convert_systemuptime_sensor_values.update_file(file_name)
+         return True
+      return False
+
+   def write_to_file(self, file_name:str, data:str)->bool:
+      """
+      Write to file
+      :args:
+         file_name:str - file to store into
+         data:str - string to write to file
+      :return:
+         if success return True, else return False
+      """
+      ret_value = True
+      try:
+         with open(file_name, 'a') as f:
+            try:
+               f.write(data+'\n')
+            except Exception as e:
+               print("Failed to append to file (%s) - %s" % (file_name, e))
+               ret_value = False
+      except Exception as e:
+         print("failed to open to file (%s) - %s" % (file_name, e))
+         ret_value = False
+      return ret_value
+
+   def move_file(self, file_name:str)->bool: 
+      """
+      Move file once full 
+      :args: 
+         file_name:str - file containing data 
+      :return: 
+         if success return True, else False 
+      """
+      ret_value = True 
+      fn = file_name.rsplit("/", 1)[-1] 
+      try: 
+         os.rename(file_name, self.watch_dir + "/" + fn) 
+      except Exception as e: 
+         print('Failed to move file to watch dir. (Error: %s)' % e)
+         ret_value = False 
+      return False 
+
+   def file_io(self, file_name:str, device_id:str, data:str): 
+      dbms = file_name.split("/")[-1].split(".")[0].lower()  
+      table_name = file_name.split(".")[2].replace("-", "_").replace(" ", "_").lower()
+      timestamp = file_name.split(".")[1]
+      device_id = device_id.replace("-", "_").replace(" ", "_") 
+      file_list = self.check_if_file_exists(dbms, table_name, device_id) 
+      if len(file_list) > 0: 
+         if self.check_file_size(file_name) is True: 
+            self.move_file(file_name) 
+            file_list = [] 
+      if not file_list: 
+         file_name = self.create_file(dbms, timestamp, table_name, device_id)
+      return self.write_to_file(file_name, data) 
+      
+      
