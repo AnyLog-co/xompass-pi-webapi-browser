@@ -23,6 +23,32 @@ def __convert_dict_to_json(data:dict)->str:
       print('Failed to convert dict to JSON. (Error: %s)' % e) 
       return False 
 
+def __convert_timestamp(value:int)->str:
+   # Calculate elapse time 
+   sec_value = value/100
+   try:
+      datetime_value = datetime.datetime.strptime(datetime.datetime.fromtimestamp(sec_value).strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S')
+   except:
+      return False
+   try:
+      elapse_time =  datetime_value - datetime.datetime(1970, 1, 1, 0, 0, 0)
+   except Exception as e:
+      print(e)
+      return False
+
+   # Calculate elapse time with year 
+   str_elapse_time = str(elapse_time)
+   day_count = int(str(elapse_time).split(' day')[0])
+   if day_count < 365:
+      return str(elapse_time)
+   
+   current_day = day_count % 365
+   years = (day_count - current_day) / 365
+
+   update_date = str(elapse_time).replace(str(day_count), str(current_day))
+   return str('%s years, %s' % (int(years), update_date))
+
+
 def convert_xompass_data(file_name:str)->(list, str):
    """
    Given JSON data from xompass server(s), convert data to be stored in db
@@ -92,7 +118,15 @@ def convert_xompass_pi_data(file_name:str)->(list, str):
             output_data[column.lower()] = dict_obj[column]
          elif column == "ParentElementTemplate": 
             output_data['device_name'] = dict_obj[column] 
-         elif column == ("ParentElement" or "Value" or "Timestamp"):  
+         elif column == "ParentElement":
+            output_data[column.lower()] = dict_obj[column]
+         elif column == "Value": 
+            output_data[column.lower()] = dict_obj[column]
+            if "SystemUptime_sensor" in file_name:
+               output_data[column.lower()] = __convert_timestamp(int(dict_obj[column]))
+            else: 
+                output_data[column.lower()] = dict_obj[column]    
+         elif column == "Timestamp": 
             output_data[column.lower()] = dict_obj[column]
       json_obj = __convert_dict_to_json(output_data)
       if json_obj is not False:
