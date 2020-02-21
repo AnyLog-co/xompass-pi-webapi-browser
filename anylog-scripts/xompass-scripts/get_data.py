@@ -144,7 +144,7 @@ def main():
    parser.add_argument('prep_dir',              type=str,   default='$HOME/anyLog-Network/data/prep',  help='directory prep data') 
    parser.add_argument('watch_dir',             type=str,   default='$HOME/AnyLog-Network/data/watch', help='directorry data ready to be stored') 
    parser.add_argument('-fs', '--file-size',    type=float, default=1,                                 help='file size')  
-   parser.add_argument('-ct', '--convert-type', type=str,   default='xompass',                         help='type of JSON conversion') 
+   parser.add_argument('-ct', '--convert-type', type=str,   default='pi',                         help='type of JSON conversion') 
    args = parser.parse_args()
 
    gd = GetData(args.rest_dir, args.prep_dir, args.watch_dir, args.file_size, args.convert_type) 

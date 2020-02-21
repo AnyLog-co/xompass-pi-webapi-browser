@@ -64,6 +64,42 @@ def convert_xompass_data(file_name:str)->(list, str):
 
    return data_set, device_id
 
+def convert_xompass_pi_data(file_name:str)->(list, str):
+   """
+   Given JSON from PI (using Xompass) convert data to be stored in db
+   :args: 
+      file_name:str - file to get data from
+   :param: 
+      data_set:list - list of converted 
+      file_data_str:str - Data from Xompass pi is organized in multiple lines, merge lines into a single strirng 
+   :return: 
+      if success returnr lis ofo JSON + device_id 
+      ele return empty list 
+   """
+   data_set = [] 
+   device_id = '' 
+   file_data_str = "" 
+
+   for part in read_file(file_name): 
+      file_data_str += part.replace("\n", "").replace("\t", "") 
+
+   for row in file_data_str.split("}")[:1]: 
+      output_data = {} 
+      dict_obj = __convert_json_to_dict(row+"}")
+      for column in dict_obj: 
+         #print(column)
+         if column == 'WebId': 
+            device_id = dict_obj[column] 
+            output_data[column.lower()] = dict_obj[column]
+         elif column == "ParentElementTemplate": 
+            output_data['device_name'] = dict_obj[column] 
+         elif column == ("ParentElement" or "Value" or "Timestamp"):  
+            output_data[column.lower()] = dict_obj[column]
+      json_obj = __convert_dict_to_json(output_data)
+      if json_obj is not False:
+         data_set.append(json_obj) 
+   return data_set, device_id 
+
 def convert_data(file_name:str, convert_type:str):
    """
    Based on convert_type, select conversion formatt 
@@ -76,3 +112,5 @@ def convert_data(file_name:str, convert_type:str):
    """
    if convert_type is 'xompass': 
       return convert_xompass_data(file_name) 
+   elif convert_type is 'pi': 
+      convert_xompass_pi_data(file_name) 
