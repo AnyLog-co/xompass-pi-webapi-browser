@@ -87,7 +87,6 @@ def convert_xompass_pi_data(file_name:str)->(list, str):
       output_data = {} 
       dict_obj = __convert_json_to_dict(row+"}")
       for column in dict_obj: 
-         print(column)
          if column == 'WebId': 
             device_id = dict_obj[column] 
             output_data[column.lower()] = dict_obj[column]
@@ -98,6 +97,7 @@ def convert_xompass_pi_data(file_name:str)->(list, str):
       json_obj = __convert_dict_to_json(output_data)
       if json_obj is not False:
          data_set.append(json_obj) 
+
    return data_set, device_id 
 
 def convert_data(file_name:str, convert_type:str):
@@ -110,7 +110,7 @@ def convert_data(file_name:str, convert_type:str):
       if success return list of JSON + device_id 
       else return empty listt 
    """
-   if convert_type is 'xompass': 
+   if convert_type.lower() == 'xompass': 
       return convert_xompass_data(file_name) 
-   elif convert_type is 'pi': 
+   elif convert_type.lower() == 'pi': 
       return convert_xompass_pi_data(file_name) 

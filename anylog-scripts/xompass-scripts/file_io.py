@@ -72,7 +72,7 @@ class FileIO:
       try:
          open(file_name, 'w').close()
       except Exception as e:
-         print("Unable to create file (%s) - %s" % (self.generate_data_prep, e))
+         print("Unable to create file (%s) - %s" % (self.prep_dir, e))
          return False
 
       return file_name
@@ -136,11 +136,24 @@ class FileIO:
          ret_value = False 
       return False 
 
-   def file_io(self, file_name:str, device_id:str, data:str): 
-      dbms = file_name.split("/")[-1].split(".")[0].lower()  
+   def file_io(self, file_name:str, device_id:str, data:str, dbms:str): 
+      if dbms is None: 
+         dbms = file_name.split("/")[-1].split(".")[0].lower()  
+         
       table_name = file_name.split(".")[2].replace("-", "_").replace(" ", "_").lower()
+
       timestamp = file_name.split(".")[1]
+      if "_" not in timestamp:
+         try: 
+            timestamp = float(timestamp) 
+         except Exception: 
+            pass
+         else: 
+            timestamp = datetime.datetime.fromtimestamp(timestamp / 1e3)
+            timestamp = str(timestamp).split(".")[0].replace("-", "_").replace(" ", "_").replace(":", "_")
+
       device_id = device_id.replace("-", "_").replace(" ", "_") 
+
       file_name = self.check_if_file_exists(dbms, table_name, device_id) 
       if len(file_name) > 0: 
          if self.check_file_size(file_name) is True: 
@@ -149,7 +162,6 @@ class FileIO:
             file_name = file_list[0] 
       if not file_name: 
          file_name = self.create_file(dbms, timestamp, table_name, device_id)
-
       return self.write_to_file(file_name, data) 
       
       

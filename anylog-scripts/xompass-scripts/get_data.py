@@ -9,10 +9,11 @@ import convert_data
 from file_io import FileIO
 
 class GetData:
-   def __init__(self, rest_dir:str, prep_dir:str, watch_dir:str, file_size:float, convert_type:str): 
+   def __init__(self, rest_dir:str, prep_dir:str, watch_dir:str, dbms:str, file_size:float, convert_type:str): 
       self.rest_dir = os.path.expanduser(os.path.expandvars(rest_dir))
       self.prep_dir = os.path.expanduser(os.path.expandvars(prep_dir))
       self.watch_dir = os.path.expanduser(os.path.expandvars(watch_dir))
+      self.dbms = dbms 
       self.file_size = file_size 
       self.convert_type = convert_type 
 
@@ -126,7 +127,7 @@ class GetData:
          if not data: 
             return False 
          for row in data: 
-            self.fi.file_io(file_name, device_id, row) 
+            self.fi.file_io(file_name, device_id, row, self.dbms) 
          exit(1) 
          #if not self.read_file(file_name): # read file and store into file 
          #   return False
@@ -143,11 +144,12 @@ def main():
    parser.add_argument('rest_dir',              type=str,   default='$HOME/AnyLog-Network/data/rest',  help='directory recieved data') 
    parser.add_argument('prep_dir',              type=str,   default='$HOME/anyLog-Network/data/prep',  help='directory prep data') 
    parser.add_argument('watch_dir',             type=str,   default='$HOME/AnyLog-Network/data/watch', help='directorry data ready to be stored') 
+   parser.add_argument('-db', '--dbms',         type=str,   default=None,                              help='if set use instead of name in file') 
    parser.add_argument('-fs', '--file-size',    type=float, default=1,                                 help='file size')  
-   parser.add_argument('-ct', '--convert-type', type=str,   default='pi',                         help='type of JSON conversion') 
+   parser.add_argument('-ct', '--convert-type', type=str,   default='pi',                              help='type of JSON conversion') 
    args = parser.parse_args()
 
-   gd = GetData(args.rest_dir, args.prep_dir, args.watch_dir, args.file_size, args.convert_type) 
+   gd = GetData(args.rest_dir, args.prep_dir, args.watch_dir, args.dbms, args.file_size, args.convert_type) 
    if not gd.validate_dirs(): 
       exit(1) 
    gd.get_data()
