@@ -42,8 +42,11 @@ def convert_value(dict_json:dict):
    except: 
       return False 
 
-   sec_value = value/100 
-   
+   try: 
+      sec_value = float(value)/100 
+   except: 
+      return False 
+
    try: 
       datetime_value = datetime.datetime.strptime(datetime.datetime.fromtimestamp(sec_value).strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S')
    except: 
@@ -63,7 +66,10 @@ def elpase_time_year(elapse_time:datetime.timedelta):
       elapse_time with year 
    """
    str_elapse_time = str(elapse_time) 
-   day_count = int(str(elapse_time).split(' day')[0]) 
+   try: 
+      day_count = int(str(elapse_time).split(' day')[0]) 
+   except: 
+      return str(elapse_time).split(' day')[0] 
    if day_count < 365: 
       return elapse_time 
    
