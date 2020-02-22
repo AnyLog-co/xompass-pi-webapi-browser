@@ -138,11 +138,11 @@ def convert_xompass_pi_data(file_name:str)->(list, str):
       dict_obj = __convert_json_to_dict(row+"}")
       for column in dict_obj: 
          if column == 'WebId': 
-            device_id = dict_obj[column] 
             output_data[column.lower()] = dict_obj[column]
          elif column == "ParentElementTemplate": 
             output_data['device_name'] = dict_obj[column] 
          elif column == "ParentElement":
+            device_id = dict_obj[column] 
             output_data[column.lower()] = dict_obj[column]
          elif column == "Value": 
             output_data[column.lower()] = dict_obj[column]

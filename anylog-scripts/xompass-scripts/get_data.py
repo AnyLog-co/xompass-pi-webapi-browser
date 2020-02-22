@@ -1,6 +1,7 @@
 import argparse
 import os 
 import sys 
+import time
 
 xompass_convert_scripts = os.path.expanduser(os.path.expandvars('$HOME/xompass-pi-webapi-browser/anylog-scripts/xompass-scripts'))
 sys.path.insert(0, xompass_convert_scripts)
@@ -118,13 +119,11 @@ class GetData:
             except: # if there isn't a file wait for 10 sec (repeat 6 times else exit) 
                if boolean == True:
                   print("No new data found")
-                  exit(1)
-               #time.sleep(timeout)
+               time.sleep(60)
                boolean = True
             else: # reset 
                boolean = False
                break
-         print(file_name)
          data, device_id = convert_data.convert_data(file_name, self.convert_type) 
          if not data: 
             return False 
@@ -136,6 +135,7 @@ class GetData:
          except Exception as e:
             print("Failed to remove file (%s) - %s" (file_name, e))
             return False
+         time.sleep(30) 
 
 def main(): 
    """
