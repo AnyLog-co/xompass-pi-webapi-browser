@@ -6,6 +6,13 @@ import sys
 import time 
 
 def read_file(file_name:str)->list:
+   """
+   Based on file_name read data 
+   :args:
+      file_name:str - file to read data 
+   :return: 
+      data read from file, if fail retun False 
+   """
    try:
       with open(file_name, 'r') as f:
          try:
@@ -19,6 +26,13 @@ def read_file(file_name:str)->list:
 
 class FileIO: 
    def __init__(self, prep_dir:str, watch_dir:str, file_size:float): 
+      """
+      Class to store data in file 
+      :param: 
+         self.prep_dir:str - dir where data is merged 
+         self.watch_dir:str - dir where data is waiting to be sent intoo DB 
+         self.file_size:str - max file to store merged data
+      """
       self.prep_dir = prep_dir
       self.watch_dir = watch_dir 
       self.file_size = self.__convert_file_size(file_size)
@@ -92,8 +106,6 @@ class FileIO:
          return -1
 
       if size >= self.file_size:
-         if 'systemuptime_sensor' in file_name:
-            convert_systemuptime_sensor_values.update_file(file_name)
          return True
       return False
 
@@ -136,12 +148,27 @@ class FileIO:
          ret_value = False 
       return False 
 
-   def file_io(self, file_name:str, device_id:str, data:str, dbms:str): 
+   def file_io(self, file_name:str, device_id:str, data:str, dbms:str)->bool: 
+      """
+      'Main' for FileIO
+      :args: 
+         file_name:str - file containing data (name used only) 
+         device_id:str - device or sensor id 
+         data:str - JSON of data to store 
+         dbms:str - db name to store data in. If dbms is None (default) use name in file
+      :param: 
+         file_name_new:strr - file to store data in 
+      :return: 
+         if fails return False, else return True 
+      """
+      # Get DBMS if not set 
       if dbms is None: 
          dbms = file_name.split("/")[-1].split(".")[0].lower()  
          
+      # Get table name from file_name 
       table_name = file_name.split(".")[2].replace("-", "_").replace(" ", "_").lower()
 
+      # Get timestamp from file_name 
       timestamp = file_name.split(".")[1]
       if "_" not in timestamp:
          try: 
@@ -152,16 +179,19 @@ class FileIO:
             timestamp = datetime.datetime.fromtimestamp(timestamp / 1e3)
             timestamp = str(timestamp).split(".")[0].replace("-", "_").replace(" ", "_").replace(":", "_")
 
+      # Update device_id format 
       device_id = device_id.replace("-", "_").replace(" ", "_") 
 
-      file_name = self.check_if_file_exists(dbms, table_name, device_id) 
-      if len(file_name) > 0: 
-         if self.check_file_size(file_name) is True: 
-            self.move_file(file_name) 
-            file_name = [] 
-            file_name = file_list[0] 
-      if not file_name: 
-         file_name = self.create_file(dbms, timestamp, table_name, device_id)
-      return self.write_to_file(file_name, data) 
+      # check if files exists / size 
+      file_name_new = self.check_if_file_exists(dbms, table_name, device_id) 
+      if len(file_name_new) > 0: 
+         if self.check_file_size(file_name_new) is True: 
+            self.move_file(file_name_new) 
+            file_name_new = [] 
+      if not file_name_new: 
+         file_name_new = self.create_file(dbms, timestamp, table_name, device_id)
+     
+      # write to file 
+      return self.write_to_file(file_name_new, data) 
       
       

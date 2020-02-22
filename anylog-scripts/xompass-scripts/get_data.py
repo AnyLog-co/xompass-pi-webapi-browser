@@ -10,6 +10,16 @@ from file_io import FileIO
 
 class GetData:
    def __init__(self, rest_dir:str, prep_dir:str, watch_dir:str, dbms:str, file_size:float, convert_type:str): 
+      """
+      Given a set of dirs, merge data to be stored in AnyLog 
+      :param: 
+         self.rest_dir:str - dir where data is kept until merged 
+         self.prep_dir:str - dir where data is merged 
+         self.watch_dir:str - dir where data is waiting to be sent intoo DB 
+         self.dbms:str - database to store data in (used in file name) [default: None]  
+         self.file_size:str - max file to store merged data [default: 1MB] 
+         self.convert_type:str - based on type of data convert to properly use JSON [default: pi] 
+      """   
       self.rest_dir = os.path.expanduser(os.path.expandvars(rest_dir))
       self.prep_dir = os.path.expanduser(os.path.expandvars(prep_dir))
       self.watch_dir = os.path.expanduser(os.path.expandvars(watch_dir))
@@ -24,6 +34,7 @@ class GetData:
          if success return True, else False 
       """
       output = True 
+
       # Validate rest dir 
       try: 
          if not os.path.isdir(self.rest_dir): 
@@ -35,6 +46,7 @@ class GetData:
       except Exception as e: 
          print('Unable to check if REST dir %s exists. (Error: %s)' % (self.rest_dir, e))
          output = False 
+         
       # Validate prep dir 
       try: 
          if not os.path.isdir(self.prep_dir): 
@@ -46,6 +58,7 @@ class GetData:
       except Exception as e: 
          print('Unable to check if PREP dir %s exists. (Error: %s)' % (self.prep_dir, e))
          output = False 
+
       # validate watch dir 
       try: 
          if not os.path.isdir(self.watch_dir):
@@ -71,18 +84,6 @@ class GetData:
          ret_value:str - return value 
       :return: 
          If an error occurs it is printed to screen and return False, else return True 
-      """
-      """ret_value = True 
-      try: # Open file 
-         with open(file_name, 'r') as f:     
-            try: # Read file 
-               row = f.read().replace("\n", "").replace("\t", "")
-            except Exception as e: 
-               print("Failed to read from file (%s) - %s" (file_name, e))
-               ret_value = False 
-      except Exception as e: 
-         print("Failed to open file (%s) - %s" % (file_name, e))
-         ret_value = False 
       """
       ret_value = True
       read_data = self.cj.read_data(file_name)
@@ -123,30 +124,40 @@ class GetData:
             else: # reset 
                boolean = False
                break
+         print(file_name)
          data, device_id = convert_data.convert_data(file_name, self.convert_type) 
          if not data: 
             return False 
          for row in data: 
-            self.fi.file_io(file_name, device_id, row, self.dbms) 
-         exit(1) 
-         #if not self.read_file(file_name): # read file and store into file 
-         #   return False
-
-         #try: # remove once doe 
-         #   os.remove(file_name)
-         #except Exception as e:
-         #   print("Failed to remove file (%s) - %s" (file_name, e))
-         #   return False
-         #time.sleep(1)
+            for i in range(10): 
+               self.fi.file_io(file_name, device_id, row, self.dbms) 
+         try: # remove once doe 
+            os.remove(file_name)
+         except Exception as e:
+            print("Failed to remove file (%s) - %s" (file_name, e))
+            return False
 
 def main(): 
+   """
+   Main for get_data
+   :positional arguments:
+      rest_dir              directory recieved data
+      prep_dir              directory prep data
+      watch_dir             directorry data ready to be stored
+
+   :optional arguments:
+      -h,  --help           show this help message and exit
+      -db, --dbms           if set use instead of name in file (default: None)
+      -fs, --file-size      file size (default: 1)
+      -ct, --convert-type   {xompass,pi} type of JSON conversion (default: pi)
+   """
    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
    parser.add_argument('rest_dir',              type=str,   default='$HOME/AnyLog-Network/data/rest',  help='directory recieved data') 
    parser.add_argument('prep_dir',              type=str,   default='$HOME/anyLog-Network/data/prep',  help='directory prep data') 
    parser.add_argument('watch_dir',             type=str,   default='$HOME/AnyLog-Network/data/watch', help='directorry data ready to be stored') 
    parser.add_argument('-db', '--dbms',         type=str,   default=None,                              help='if set use instead of name in file') 
    parser.add_argument('-fs', '--file-size',    type=float, default=1,                                 help='file size')  
-   parser.add_argument('-ct', '--convert-type', type=str,   default='pi',                              help='type of JSON conversion') 
+   parser.add_argument('-ct', '--convert-type', type=str,   default='pi', choices=['xompass', 'pi'],   help='type of JSON conversion') 
    args = parser.parse_args()
 
    gd = GetData(args.rest_dir, args.prep_dir, args.watch_dir, args.dbms, args.file_size, args.convert_type) 

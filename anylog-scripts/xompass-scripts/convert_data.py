@@ -10,6 +10,13 @@ sys.path.insert(0, xompass_convert_scripts)
 from file_io import read_file
 
 def __convert_json_to_dict(data:str)->dict: 
+   """
+   Convert JSON into dict 
+   :args: 
+      data:str - JSON to convert into dict 
+   :return: 
+      JSON as a dict, if fail False 
+   """
    try: 
       return json.loads(data) 
    except Exception as e: 
@@ -17,6 +24,13 @@ def __convert_json_to_dict(data:str)->dict:
       return False 
 
 def __convert_dict_to_json(data:dict)->str: 
+   """
+   Convert dict into JSON 
+   :args: 
+      data:dict - dict to convert into JSON 
+   :return:
+      JSON, else False 
+   """
    try: 
       return json.dumps(data)
    except Exception as e: 
@@ -24,6 +38,17 @@ def __convert_dict_to_json(data:dict)->str:
       return False 
 
 def __convert_timestamp(value:int)->str:
+   """
+   There exists a case where System Uptime is retunred in subseconds. code converts said seconds to epoch time
+   :args: 
+      value:int - seconds to be converted into epoch
+   :param: 
+      sec_value:float - value in seconds format
+      datetime_value:datetime.datetime - convert seconds to datetime 
+      elapse_time:datetime.datetime - convert datetime_value to elapse time 
+   :return: 
+      return elapse_time, if fail return False 
+   """
    # Calculate elapse time 
    sec_value = value/100
    try:
@@ -74,8 +99,7 @@ def convert_xompass_data(file_name:str)->(list, str):
       return False 
    
    for row in file_data:
-      #output_data = {'timestamp': timestamp} 
-      output_data = {} 
+      output_data = {'timestamp': timestamp} 
       dict_obj = __convert_json_to_dict(row)
       json_obj = False 
       device_id = None 
