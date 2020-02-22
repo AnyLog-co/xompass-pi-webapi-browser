@@ -18,7 +18,7 @@ def __convert_json_to_dict(data:str)->dict:
       JSON as a dict, if fail False 
    """
    try: 
-      return json.loads(data) 
+      return json.loads(data.replace("'", '"')) 
    except Exception as e: 
       print('Failed to convert JSON to dict. (Error: %s)' % e)
       return False 

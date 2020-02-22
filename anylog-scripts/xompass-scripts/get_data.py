@@ -119,6 +119,7 @@ class GetData:
             except: # if there isn't a file wait for 10 sec (repeat 6 times else exit) 
                if boolean == True:
                   print("No new data found")
+                  exit(1) 
                time.sleep(60)
                boolean = True
             else: # reset 
@@ -135,7 +136,7 @@ class GetData:
          except Exception as e:
             print("Failed to remove file (%s) - %s" (file_name, e))
             return False
-         time.sleep(30) 
+         time.sleep(0.5) 
 
 def main(): 
    """
