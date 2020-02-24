@@ -1,9 +1,25 @@
 import datetime 
 import glob
+import json 
 import os
+import re 
 import shutil
 import sys 
 import time 
+
+def convert_json_to_dict(data:str)->dict:
+   """
+   Convert JSON into dict 
+   :args: 
+      data:str - JSON to convert into dict 
+   :return: 
+      JSON as a dict, if fail False 
+   """
+   try:
+      return json.loads(data.replace("'", '"'))
+   except Exception as e:
+      print('Failed to convert JSON to dict. (Error: %s)' % e)
+      return False
 
 def read_file(file_name:str)->list:
    """
@@ -148,7 +164,7 @@ class FileIO:
          ret_value = False 
       return False 
 
-   def file_io(self, file_name:str, device_id:str, data:str, dbms:str)->bool: 
+   def file_io(self, file_name:str, column_config:dict, data:str)->bool: 
       """
       'Main' for FileIO
       :args: 
@@ -161,27 +177,26 @@ class FileIO:
       :return: 
          if fails return False, else return True 
       """
-      # Get DBMS if not set 
-      if dbms is None: 
-         dbms = file_name.split("/")[-1].split(".")[0].lower()  
-         
-      # Get table name from file_name 
-      table_name = file_name.split(".")[2].replace("-", "_").replace(" ", "_").lower()
+      updated_column = {} 
+      convert_dict = convert_json_to_dict(data) 
+      timestamp = '' 
+      if not convert_dict: 
+         return False 
+      for column in column_config: 
+         if isinstance(column_config[column], list) or isinstance(column_config[column], tuple): 
+            for i in column_config[column]: 
+               try: 
+                  updated_column[column] = i
+               except: 
+                  pass 
+         elif isinstance(column_config[column], str): 
+            updated_column[column] = column_config[column]
 
-      # Get timestamp from file_name 
-      timestamp = file_name.split(".")[1]
-      if "_" not in timestamp:
-         try: 
-            timestamp = float(timestamp) 
-         except Exception: 
-            pass
-         else: 
-            timestamp = datetime.datetime.fromtimestamp(timestamp / 1e3)
-            timestamp = str(timestamp).split(".")[0].replace("-", "_").replace(" ", "_").replace(":", "_")
-
-      # Update device_id format 
-      device_id = device_id.replace("-", "_").replace(" ", "_") 
-
+      timestamp = convert_dict[updated_column['timestamp']].replace("-", "_").replace("T", "_").replace(" ", "_").replace(":", "_").replace(".", "_")
+      device_id = convert_dict[updated_column['device_id']].replace("-", "_").replace(" ", "_") 
+      table_name = updated_column['table_name']
+      dbms = column_config['db_name']
+     
       # check if files exists / size 
       file_name_new = self.check_if_file_exists(dbms, table_name, device_id) 
       if len(file_name_new) > 0: 
@@ -193,5 +208,3 @@ class FileIO:
      
       # write to file 
       return self.write_to_file(file_name_new, data) 
-      
-      

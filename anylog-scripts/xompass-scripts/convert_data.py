@@ -1,3 +1,4 @@
+import csv 
 import datetime 
 import json 
 import os 
@@ -158,6 +159,34 @@ def convert_xompass_pi_data(file_name:str)->(list, str):
 
    return data_set, device_id 
 
+def convert_csv_to_json(file_name:str)->list: 
+   """
+   Given a CSV file convert to JSON 
+   :args: 
+      file_name:str file to get data from 
+   :param: 
+      data_set:list - JSON from file 
+   :return: 
+      if success return full list, else empty list 
+   """
+   data_set = []
+   try: 
+      with open(file_name, 'r') as csvfile:
+         try: 
+            reader = csv.DictReader(csvfile)
+         except Exception as e: 
+            print('Failed to read CSV file %s - Error: %s' % (file_name, e))
+            return False 
+         for row in reader: 
+            json_obj = __convert_dict_to_json(dict(row))
+            if json_obj is not False: 
+               data_set.append(json_obj) 
+   except Exception as e: 
+      print('Failed to open CSV file %s - Error: %s' % (file_name, e))
+      return False 
+
+   return data_set
+
 def convert_data(file_name:str, convert_type:str):
    """
    Based on convert_type, select conversion formatt 
@@ -172,3 +201,5 @@ def convert_data(file_name:str, convert_type:str):
       return convert_xompass_data(file_name) 
    elif convert_type.lower() == 'pi': 
       return convert_xompass_pi_data(file_name) 
+   elif convert_type.lower() == 'csv': 
+      return convert_csv_to_json(file_name)
