@@ -1,16 +1,18 @@
 import argparse
 import os 
-import sys 
+import sys
 import time
 
 xompass_convert_scripts = os.path.expanduser(os.path.expandvars('$HOME/xompass-pi-webapi-browser/anylog-scripts/xompass-scripts'))
 sys.path.insert(0, xompass_convert_scripts)
 
+
 import convert_data
 from file_io import FileIO
+from read_config import read_yaml 
 
 class GetData:
-   def __init__(self, rest_dir:str, prep_dir:str, watch_dir:str, dbms:str, file_size:float, convert_type:str): 
+   def __init__(self, rest_dir:str, prep_dir:str, watch_dir:str, dbms:str, file_size:float, convert_type:str, config_file:str): 
       """
       Given a set of dirs, merge data to be stored in AnyLog 
       :param: 
@@ -24,6 +26,12 @@ class GetData:
       self.rest_dir = os.path.expanduser(os.path.expandvars(rest_dir))
       self.prep_dir = os.path.expanduser(os.path.expandvars(prep_dir))
       self.watch_dir = os.path.expanduser(os.path.expandvars(watch_dir))
+
+      if config_file is not None: 
+         self.config_file = os.path.expanduser(os.path.expandvars(config_file))
+         self.config_data = read_yaml(self.config_file) 
+      else: 
+         self.config_file = None
       self.dbms = dbms 
       self.file_size = file_size 
       self.convert_type = convert_type 
@@ -119,17 +127,17 @@ class GetData:
             except: # if there isn't a file wait for 10 sec (repeat 6 times else exit) 
                if boolean == True:
                   print("No new data found")
+                  exit(1) 
                time.sleep(60)
                boolean = True
             else: # reset 
                boolean = False
                break
-         data, device_id = convert_data.convert_data(file_name, self.convert_type) 
+         data = convert_data.convert_data(file_name, self.convert_type)
          if not data: 
             return False 
          for row in data: 
-            for i in range(10): 
-               self.fi.file_io(file_name, device_id, row, self.dbms) 
+            self.fi.file_io(file_name, self.config_data, row) 
          try: # remove once doe 
             os.remove(file_name)
          except Exception as e:
@@ -152,15 +160,16 @@ def main():
       -ct, --convert-type   {xompass,pi} type of JSON conversion (default: pi)
    """
    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-   parser.add_argument('rest_dir',              type=str,   default='$HOME/AnyLog-Network/data/rest',  help='directory recieved data') 
-   parser.add_argument('prep_dir',              type=str,   default='$HOME/anyLog-Network/data/prep',  help='directory prep data') 
-   parser.add_argument('watch_dir',             type=str,   default='$HOME/AnyLog-Network/data/watch', help='directorry data ready to be stored') 
-   parser.add_argument('-db', '--dbms',         type=str,   default=None,                              help='if set use instead of name in file') 
-   parser.add_argument('-fs', '--file-size',    type=float, default=1,                                 help='file size')  
-   parser.add_argument('-ct', '--convert-type', type=str,   default='pi', choices=['xompass', 'pi'],   help='type of JSON conversion') 
+   parser.add_argument('rest_dir',              type=str,   default='$HOME/AnyLog-Network/data/rest',         help='directory recieved data') 
+   parser.add_argument('prep_dir',              type=str,   default='$HOME/anyLog-Network/data/prep',         help='directory prep data') 
+   parser.add_argument('watch_dir',             type=str,   default='$HOME/AnyLog-Network/data/watch',        help='directorry data ready to be stored') 
+   parser.add_argument('-db', '--dbms',         type=str,   default=None,                                     help='if set use instead of name in file') 
+   parser.add_argument('-fs', '--file-size',    type=float, default=1,                                        help='file size')  
+   parser.add_argument('-ct', '--convert-type', type=str,   default='pi', choices=['xompass', 'pi', 'csv'],   help='type of JSON conversion') 
+   parser.add_argument('-cf', '--config-file',  type=str,   default=None,                                     help='config used to file')
    args = parser.parse_args()
 
-   gd = GetData(args.rest_dir, args.prep_dir, args.watch_dir, args.dbms, args.file_size, args.convert_type) 
+   gd = GetData(args.rest_dir, args.prep_dir, args.watch_dir, args.dbms, args.file_size, args.convert_type, args.config_file) 
    if not gd.validate_dirs(): 
       exit(1) 
    gd.get_data()
