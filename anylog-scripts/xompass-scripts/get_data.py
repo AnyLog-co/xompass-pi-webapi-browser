@@ -137,7 +137,7 @@ class GetData:
          if not data: 
             return False 
          for row in data: 
-            self.fi.file_io(file_name, self.config_data, row) 
+            self.fi.file_io(file_name, self.dbms, self.config_data, row) 
          try: # remove once doe 
             os.remove(file_name)
          except Exception as e:
