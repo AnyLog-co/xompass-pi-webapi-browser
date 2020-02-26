@@ -103,7 +103,6 @@ def convert_xompass_data(file_name:str)->(list, str):
       output_data = {'timestamp': timestamp} 
       dict_obj = __convert_json_to_dict(row)
       json_obj = False 
-      device_id = None 
       if dict_obj: 
          device_id = list(dict_obj.keys())[0]
          output_data['device_id'] = device_id 
@@ -112,8 +111,7 @@ def convert_xompass_data(file_name:str)->(list, str):
             json_obj = __convert_dict_to_json(output_data) 
       if json_obj is not False: 
          data_set.append(json_obj)
-
-   return data_set, device_id
+   return data_set
 
 def convert_xompass_pi_data(file_name:str)->(list, str):
    """
@@ -143,7 +141,6 @@ def convert_xompass_pi_data(file_name:str)->(list, str):
          elif column == "ParentElementTemplate": 
             output_data['device_name'] = dict_obj[column] 
          elif column == "ParentElement":
-            device_id = dict_obj[column] 
             output_data[column.lower()] = dict_obj[column]
          elif column == "Value": 
             output_data[column.lower()] = dict_obj[column]
@@ -157,7 +154,7 @@ def convert_xompass_pi_data(file_name:str)->(list, str):
       if json_obj is not False:
          data_set.append(json_obj) 
 
-   return data_set, device_id 
+   return data_set
 
 def convert_csv_to_json(file_name:str)->list: 
    """
@@ -178,6 +175,17 @@ def convert_csv_to_json(file_name:str)->list:
             print('Failed to read CSV file %s - Error: %s' % (file_name, e))
             return False 
          for row in reader: 
+            for val in row: 
+               if row[val].isdigit(): 
+                   try: 
+                      row[val] = int(row[val])
+                   except: 
+                      row[val] = row[val] 
+               else: 
+                  try: 
+                     row[val] = float(row[val]) 
+                  except: 
+                     row[val] = row[val] 
             json_obj = __convert_dict_to_json(dict(row))
             if json_obj is not False: 
                data_set.append(json_obj) 

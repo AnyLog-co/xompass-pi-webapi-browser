@@ -28,10 +28,11 @@ class GetData:
       self.watch_dir = os.path.expanduser(os.path.expandvars(watch_dir))
 
       if config_file is not None: 
-         self.config_file = os.path.expanduser(os.path.expandvars(config_file))
-         self.config_data = read_yaml(self.config_file) 
+         config_file = os.path.expanduser(os.path.expandvars(config_file))
+         self.config_data = read_yaml(config_file) 
       else: 
-         self.config_file = None
+         self.config_data = None
+         
       self.dbms = dbms 
       self.file_size = file_size 
       self.convert_type = convert_type 
@@ -123,7 +124,7 @@ class GetData:
          boolean = False
          for i in range(2):
             try: # Try to find file with data  
-               file_name = self.rest_dir + "/" + os.listdir(self.rest_dir)[0]
+               file_name = self.rest_dir + "/" + sorted(os.listdir(self.rest_dir))[0]
             except: # if there isn't a file wait for 10 sec (repeat 6 times else exit) 
                if boolean == True:
                   print("No new data found")
@@ -137,7 +138,7 @@ class GetData:
          if not data: 
             return False 
          for row in data: 
-            self.fi.file_io(file_name, self.config_data, row) 
+            self.fi.file_io(file_name, self.dbms, self.config_data, row) 
          try: # remove once doe 
             os.remove(file_name)
          except Exception as e:

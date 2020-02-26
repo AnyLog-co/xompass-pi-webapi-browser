@@ -164,7 +164,7 @@ class FileIO:
          ret_value = False 
       return False 
 
-   def file_io(self, file_name:str, column_config:dict, data:str)->bool: 
+   def file_io(self, file_name:str, dbms:str, column_config:dict, data:str)->bool: 
       """
       'Main' for FileIO
       :args: 
@@ -178,25 +178,37 @@ class FileIO:
          if fails return False, else return True 
       """
       updated_column = {} 
-      convert_dict = convert_json_to_dict(data) 
       timestamp = '' 
-      if not convert_dict: 
+      if column_config is not None: 
+         convert_dict = convert_json_to_dict(data) 
+      else: 
+         convert_dict = None
+      if convert_dict is False: 
          return False 
-      for column in column_config: 
-         if isinstance(column_config[column], list) or isinstance(column_config[column], tuple): 
-            for i in column_config[column]: 
-               try: 
-                  updated_column[column] = i
-               except: 
-                  pass 
-         elif isinstance(column_config[column], str): 
-            updated_column[column] = column_config[column]
 
-      timestamp = convert_dict[updated_column['timestamp']].replace("-", "_").replace("T", "_").replace(" ", "_").replace(":", "_").replace(".", "_")
-      device_id = convert_dict[updated_column['device_id']].replace("-", "_").replace(" ", "_") 
-      table_name = updated_column['table_name']
-      dbms = column_config['db_name']
+      if dbms is not None: 
+         pass 
+      elif isinstance(column_config, dict) and 'db_name' in column_config:
+         dbms = column_config['db_name'] 
+      else: 
+         dbms = 'db_test' 
+ 
+      if isinstance(column_config, dict) and 'timestamp' in column_config: 
+         timestamp = convert_dict[column_config['timestamp']].replace("-", "_").replace("T", "_").replace(" ", "_").replace(":", "_").replace(".", "_")
+      else: 
+         timestamp = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S") 
+       
+      if isinstance(column_config, dict) and 'device_id' in column_config: 
+         device_id = str(convert_dict[column_config['device_id']]).replace("-", "_").replace(" ", "_")
+      else: 
+         device_id = file_name.split("/")[-1].split(".")[0] 
      
+      if isinstance(column_config, dict) and 'table_name' in column_config: 
+         table_name = column_config['table_name']
+      else: 
+         table_name = file_name.split("/")[-1].split(".")[-2]
+      
+
       # check if files exists / size 
       file_name_new = self.check_if_file_exists(dbms, table_name, device_id) 
       if len(file_name_new) > 0: 
