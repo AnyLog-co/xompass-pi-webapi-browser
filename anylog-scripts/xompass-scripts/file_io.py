@@ -178,29 +178,33 @@ class FileIO:
          if fails return False, else return True 
       """
       updated_column = {} 
+      timestamp = '' 
       if column_config is not None: 
          convert_dict = convert_json_to_dict(data) 
-      timestamp = '' 
-      if not convert_dict: 
+      else: 
+         convert_dict = None
+      if convert_dict is False: 
          return False 
-      
-      if dbms is None and 'db_name' in column_config: 
+
+      if dbms is not None: 
+         pass 
+      elif isinstance(column_config, dict) and 'db_name' in column_config:
          dbms = column_config['db_name'] 
       else: 
          dbms = 'db_test' 
-
-      if 'timestamp' in column_config: 
+ 
+      if isinstance(column_config, dict) and 'timestamp' in column_config: 
          timestamp = convert_dict[column_config['timestamp']].replace("-", "_").replace("T", "_").replace(" ", "_").replace(":", "_").replace(".", "_")
       else: 
          timestamp = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S") 
        
-      if 'device_id' in column_config: 
-         device_id = convert_dict[column_config['device_id']].replace("-", "_").replace(" ", "_")
+      if isinstance(column_config, dict) and 'device_id' in column_config: 
+         device_id = str(convert_dict[column_config['device_id']]).replace("-", "_").replace(" ", "_")
       else: 
          device_id = file_name.split("/")[-1].split(".")[0] 
      
-      if 'table_name' in column_config: 
-         table_name = convert_dict[column_config['table_name']]
+      if isinstance(column_config, dict) and 'table_name' in column_config: 
+         table_name = column_config['table_name']
       else: 
          table_name = file_name.split("/")[-1].split(".")[-2]
       

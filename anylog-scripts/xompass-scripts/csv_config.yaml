@@ -1,5 +1,6 @@
 # file name: db_name.device_id.timestamp.table_name.json 
+# {"MP_ID": 3175001, "A": "A", "TimeStamp": "2012-12-01T00:00:00", "APhaseA": 0.41, "BPhaseA": 0.22, "CPhaseA": 0.46}
 db_name: pge_test
-device_id: mp_id 
-timestamp: timestamp 
+device_id: MP_ID 
+timestamp: TimeStamp
 table_name: device_sensor

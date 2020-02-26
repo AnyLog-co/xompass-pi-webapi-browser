@@ -28,10 +28,11 @@ class GetData:
       self.watch_dir = os.path.expanduser(os.path.expandvars(watch_dir))
 
       if config_file is not None: 
-         self.config_file = os.path.expanduser(os.path.expandvars(config_file))
-         self.config_data = read_yaml(self.config_file) 
+         config_file = os.path.expanduser(os.path.expandvars(config_file))
+         self.config_data = read_yaml(config_file) 
       else: 
-         self.config_file = None
+         self.config_data = None
+         
       self.dbms = dbms 
       self.file_size = file_size 
       self.convert_type = convert_type 

@@ -103,7 +103,6 @@ def convert_xompass_data(file_name:str)->(list, str):
       output_data = {'timestamp': timestamp} 
       dict_obj = __convert_json_to_dict(row)
       json_obj = False 
-      device_id = None 
       if dict_obj: 
          device_id = list(dict_obj.keys())[0]
          output_data['device_id'] = device_id 
@@ -112,8 +111,7 @@ def convert_xompass_data(file_name:str)->(list, str):
             json_obj = __convert_dict_to_json(output_data) 
       if json_obj is not False: 
          data_set.append(json_obj)
-
-   return data_set, device_id
+   return data_set
 
 def convert_xompass_pi_data(file_name:str)->(list, str):
    """
