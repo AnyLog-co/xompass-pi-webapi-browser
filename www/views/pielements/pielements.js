@@ -2,7 +2,6 @@ angular.module('app.pielements',['angularTreeview', 'ngclipboard','ngWebSocket']
     .controller('PielementsCtrl', function ($scope, $http, socket) {
         $scope.log = "";
 
-
         $scope.saveSettings = function () {
             $http.post('/pielements', $scope.srvPiConfig).then(
                 function (response) {
@@ -242,8 +241,9 @@ angular.module('app.pielements',['angularTreeview', 'ngclipboard','ngWebSocket']
         $scope.getDataBases = function(){
             console.log("Requesting databases")
             socket.send({MSGTYPE: "get", TYPE: "databases"});
-        }();
+        };
 
+        $scope.getDataBases();
         $scope.getElement = function( id){
             if(id){
                 socket.send({MSGTYPE: "get", TYPE: "element", ID: id});
@@ -258,7 +258,9 @@ angular.module('app.pielements',['angularTreeview', 'ngclipboard','ngWebSocket']
     })
     .factory('socket', function($websocket) {
         // Open a WebSocket connection
-        var socket = $websocket('ws://'+window.location.hostname+':7400/ws/pielements');
+        let websocket_url = 'ws://'+window.location.hostname+':' + (window.location.port) + '/ws/pielements';
+        var socket = $websocket(websocket_url);
+        console.log("WS connection URL: " + websocket_url);
         return socket;
     });
 

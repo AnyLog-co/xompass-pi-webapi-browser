@@ -138,8 +138,8 @@ def convert_xompass_pi_data(file_name:str)->(list, str):
       for column in dict_obj: 
          if column == 'WebId': 
             output_data[column.lower()] = dict_obj[column]
-         elif column == "ParentElementTemplate": 
-            output_data['device_name'] = dict_obj[column] 
+         elif column == "ConfigString": 
+            output_data['device_name'] = dict_obj[column].rsplit("\\", 1)[-1].split('.', 1)[0]
          elif column == "ParentElement":
             output_data[column.lower()] = dict_obj[column]
          elif column == "Value": 
