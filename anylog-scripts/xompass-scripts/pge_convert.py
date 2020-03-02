@@ -24,15 +24,13 @@ DATA_SETS = {
 
 def update_values(pge_data:dict)->dict:
    """
-   Given a CSV file convert to JSON
-   :args:
-      file_name:str file to get data from
-   :param:
-      data_set:list - JSON from file
-   :return:
-      if success return full list, else empty list
+   For PGE data, update dictionry to contain farthur details 
+   :ags:
+      pge_data:dict - dict to update 
+   :return: 
+      if value with given ID is returned, then update, else return empty dict 
    """
    for data_set in DATA_SETS: 
       if int(pge_data['MP_ID']) in DATA_SETS[data_set]['mp_ids']:
          return {**pge_data, **DATA_SETS[data_set]['additional_info']}
-    
+   return {}  
