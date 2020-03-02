@@ -176,9 +176,8 @@ def convert_csv_to_json(file_name:str, pge:bool = False)->list:
             print('Failed to read CSV file %s - Error: %s' % (file_name, e))
             return False 
          for row in reader: 
-            print(row)
-            pge_convert.update_values(row) 
-            exit(1) 
+            if pge is True: 
+               row = pge_convert.update_values(row) 
             for val in row: 
                if row[val].isdigit(): 
                    try: 
@@ -190,13 +189,16 @@ def convert_csv_to_json(file_name:str, pge:bool = False)->list:
                      row[val] = float(row[val]) 
                   except: 
                      row[val] = row[val] 
-            json_obj = __convert_dict_to_json(dict(row))
-            if json_obj is not False: 
-               data_set.append(json_obj) 
+            if len(row) > 0: 
+               if pge is True: 
+                  data_set.append(row)
+               else:  
+                  json_obj = __convert_dict_to_json(row) 
+                  if json_obj is not False: 
+                     data_set.append(row)
    except Exception as e: 
       print('Failed to open CSV file %s - Error: %s' % (file_name, e))
       return False 
-
    return data_set
 
 def convert_data(file_name:str, convert_type:str):

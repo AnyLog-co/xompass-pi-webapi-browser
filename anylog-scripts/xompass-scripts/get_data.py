@@ -1,4 +1,5 @@
 import argparse
+import json
 import os 
 import sys
 import time
@@ -10,6 +11,20 @@ sys.path.insert(0, xompass_convert_scripts)
 import convert_data
 from file_io import FileIO
 from read_config import read_yaml 
+
+def convert_dict_to_json(data:dict)->str:
+   """
+   Convert dict into JSON
+   :args:
+      data:dict - dict to convert into JSON
+   :return:
+      JSON, else False
+   """
+   try:
+      return json.dumps(data)
+   except Exception as e:
+      print('Failed to convert dict to JSON. (Error: %s)' % e)
+      return False
 
 class GetData:
    def __init__(self, rest_dir:str, prep_dir:str, watch_dir:str, dbms:str, file_size:float, convert_type:str, config_file:str): 
@@ -138,7 +153,12 @@ class GetData:
          if not data: 
             return False 
          for row in data: 
-            self.fi.file_io(file_name, self.dbms, self.config_data, row) 
+            if self.convert_type == 'pge':
+               dbms = self.dbms + "_" + row['region'] 
+               json_obj = convert_dict_to_json(row)  
+               self.fi.file_io(file_name, dbms, self.config_data, json_obj)
+            else: 
+               self.fi.file_io(file_name, self.dbms, self.config_data, row) 
          try: # remove once doe 
             os.remove(file_name)
          except Exception as e:
@@ -166,7 +186,7 @@ def main():
    parser.add_argument('watch_dir',             type=str,   default='$HOME/AnyLog-Network/data/watch',        help='directorry data ready to be stored') 
    parser.add_argument('-db', '--dbms',         type=str,   default=None,                                     help='if set use instead of name in file') 
    parser.add_argument('-fs', '--file-size',    type=float, default=1,                                        help='file size')  
-   parser.add_argument('-ct', '--convert-type', type=str,   default='pi', choices=['xompass', 'pi', 'csv'],   help='type of JSON conversion') 
+   parser.add_argument('-ct', '--convert-type', type=str,   default='pi', choices=['xompass', 'pi', 'csv', 'pge'],   help='type of JSON conversion') 
    parser.add_argument('-cf', '--config-file',  type=str,   default=None,                                     help='config used to file')
    args = parser.parse_args()
 
