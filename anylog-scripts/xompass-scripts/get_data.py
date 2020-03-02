@@ -124,7 +124,7 @@ class GetData:
 
       return ret_value
 
-   def get_data(self):
+   def get_data(self, remove_file:bool):
       """
       Main for class
       :args: 
@@ -135,6 +135,7 @@ class GetData:
          if an error occurs it is printed to screen and return False, else return True 
       """
       count = 0
+      removed_files = [] 
       while True:
          boolean = False
          for i in range(2):
@@ -149,6 +150,11 @@ class GetData:
             else: # reset 
                boolean = False
                break
+         if file_name.rsplit("/")[-1] in removed_files: 
+            if sorted(removed_files) == sorted(os.listdir(self.rest_dir)):
+               exit(1) 
+            else: 
+               break 
          data = convert_data.convert_data(file_name, self.convert_type)
          if not data: 
             return False 
@@ -159,11 +165,14 @@ class GetData:
                self.fi.file_io(file_name, dbms, self.config_data, json_obj)
             else: 
                self.fi.file_io(file_name, self.dbms, self.config_data, row) 
-         try: # remove once doe 
-            os.remove(file_name)
-         except Exception as e:
-            print("Failed to remove file (%s) - %s" (file_name, e))
-            return False
+         if remove_file: 
+            try: # remove once doe 
+               os.remove(file_name)
+            except Exception as e:
+               print("Failed to remove file (%s) - %s" (file_name, e))
+               return False
+         else:
+            removed_files.append(file_name.rsplit("/", 1)[-1]) 
          time.sleep(0.5) 
 
 def main(): 
@@ -188,12 +197,13 @@ def main():
    parser.add_argument('-fs', '--file-size',    type=float, default=1,                                        help='file size')  
    parser.add_argument('-ct', '--convert-type', type=str,   default='pi', choices=['xompass', 'pi', 'csv', 'pge'],   help='type of JSON conversion') 
    parser.add_argument('-cf', '--config-file',  type=str,   default=None,                                     help='config used to file')
+   parser.add_argument('--remove-file',         action='store_true',                                          help='if set remove')
    args = parser.parse_args()
-
+   
    gd = GetData(args.rest_dir, args.prep_dir, args.watch_dir, args.dbms, args.file_size, args.convert_type, args.config_file) 
    if not gd.validate_dirs(): 
       exit(1) 
-   gd.get_data()
+   gd.get_data(args.remove_file)
 
 if __name__ == '__main__': 
    main()
