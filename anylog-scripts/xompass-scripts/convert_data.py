@@ -9,6 +9,7 @@ xompass_convert_scripts = os.path.expanduser(os.path.expandvars('$HOME/xompass-p
 sys.path.insert(0, xompass_convert_scripts)
 
 from file_io import read_file
+import pge_convert 
 
 def __convert_json_to_dict(data:str)->dict: 
    """
@@ -156,7 +157,7 @@ def convert_xompass_pi_data(file_name:str)->(list, str):
 
    return data_set
 
-def convert_csv_to_json(file_name:str)->list: 
+def convert_csv_to_json(file_name:str, pge:bool = False)->list: 
    """
    Given a CSV file convert to JSON 
    :args: 
@@ -175,6 +176,9 @@ def convert_csv_to_json(file_name:str)->list:
             print('Failed to read CSV file %s - Error: %s' % (file_name, e))
             return False 
          for row in reader: 
+            print(row)
+            pge_convert.update_values(row) 
+            exit(1) 
             for val in row: 
                if row[val].isdigit(): 
                    try: 
@@ -205,9 +209,12 @@ def convert_data(file_name:str, convert_type:str):
       if success return list of JSON + device_id 
       else return empty listt 
    """
+   convert_type = 'pge' 
    if convert_type.lower() == 'xompass': 
       return convert_xompass_data(file_name) 
    elif convert_type.lower() == 'pi': 
       return convert_xompass_pi_data(file_name) 
    elif convert_type.lower() == 'csv': 
       return convert_csv_to_json(file_name)
+   elif convert_type.lower() == 'pge': 
+      return convert_csv_to_json(file_name, True)
