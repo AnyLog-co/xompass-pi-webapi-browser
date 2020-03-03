@@ -2,23 +2,14 @@ var express = require('express');
 var router = express.Router();
 var interf = require('../modules/interface2');
 
-router.get('/af_sync', function (req, res) {
-    if(req.query.dbid){
-        interf.getAllFromAF(req.query.dbid, ()=>{
-            res.send(srvPiConfig);
-            freader.saveFile('server_pi_config.json', JSON.stringify(srvPiConfig, null, '\t'));
-        })
-    }else{
-        res.send("Invalid Request");
-    }
-});
-
+// get af servers
 router.get('/af_list', function (req, res) {
     interf.getAssetServers(function(asWebId, totalAssetServers){
         res.send(srvPiConfig.assetServers);
     });
 });
 
+// get af instances
 router.get('/af_databases', function (req, res) {
     if(req.query.afid){    
         console.log(req.query.afid)
@@ -34,11 +25,22 @@ router.get('/af_databases', function (req, res) {
 });
 
 
+router.get('/af_sync', function (req, res) {
+    if(req.query.dbid){
+        interf.getAllFromAF(req.query.dbid, ()=>{
+            res.send(srvPiConfig || {});
+            freader.saveFile('server_pi_config.json', JSON.stringify(srvPiConfig, null, '\t'));
+        })
+    }else{
+        res.send("Invalid Request");
+    }
+});
+
 router.get('/get_element_list', function (req, res) {
     res.send(srvPiConfig.elements);
     let date = new Date().getTime();
     //freader.saveFile2(filename, JSON.stringify(srvPiConfig.elements, null, '\t'));
-    console.log("Done GET /get_element_list, Output: " + filename)
+    console.log("Done GET /get_element_list")
 });
 
 router.get('/get_sensors_list', function (req, res) {
@@ -111,9 +113,29 @@ router.get('/get_sensor_data', function (req, res) {
 });
 
 router.get('/get_sensor_data_summary', function (req, res) {
+    console.log(req)
     if(req.query.sid && req.query.stime && req.query.etime && req.query.summtype && req.query.grouptime){
-        let swebId = srvPiConfig.idToWebId[req.query.sid];
-        interf.getSensorDataSummary(swebId, req.query.stime,req.query.etime,req.query.grouptime, req.query.summtype, function(data){
+        
+        // Convert ids to webids
+        let swebId = null;
+        if(Array.isArray(req.query.sid)){
+            if(!Array.isArray(req.query.summtype)){
+                res.send("You need to specify a SUMMTYPE for each SID");
+                return;
+            }
+            swebId = [];
+            for(let i in req.query.sid){
+                let sid = req.query.sid[i];
+                if(srvPiConfig.idToWebId[sid]){
+                    swebId.push(srvPiConfig.idToWebId[sid])
+                }
+            }
+            // summtype still an array, but can be workedout inside the sensordatasummary call
+        }else{
+            swebId = srvPiConfig.idToWebId[req.query.sid];
+        }
+
+        interf.getSensorDataSummary(swebId, req.query.stime,req.query.etime,req.query.grouptime, req.query.summtype, req.query.sampleType || "", req.query.sampleInterval, req.query.filerExpression, function(data){
             if(data){
                 res.send(data);
             }
