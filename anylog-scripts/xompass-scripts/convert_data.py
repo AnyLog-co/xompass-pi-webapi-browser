@@ -129,9 +129,12 @@ def convert_xompass_pi_data(file_name:str)->(list, str):
    data_set = [] 
    device_id = '' 
    file_data_str = "" 
-
-   for part in read_file(file_name): 
-      file_data_str += part.replace("\n", "").replace("\t", "") 
+   
+   try: 
+      for part in read_file(file_name): 
+         file_data_str += part.replace("\n", "").replace("\t", "") 
+   except: 
+      return False 
 
    for row in file_data_str.split("}")[:1]: 
       output_data = {} 
@@ -211,7 +214,6 @@ def convert_data(file_name:str, convert_type:str):
       if success return list of JSON + device_id 
       else return empty listt 
    """
-   convert_type = 'pge' 
    if convert_type.lower() == 'xompass': 
       return convert_xompass_data(file_name) 
    elif convert_type.lower() == 'pi': 

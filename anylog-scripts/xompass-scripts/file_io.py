@@ -105,6 +105,7 @@ class FileIO:
          print("Unable to create file (%s) - %s" % (self.prep_dir, e))
          return False
 
+      print(datetime.datetime.now()) 
       return file_name
 
    def check_file_size(self, file_name:str)->bool:

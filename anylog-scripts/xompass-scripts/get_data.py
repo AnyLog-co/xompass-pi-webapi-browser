@@ -157,7 +157,7 @@ class GetData:
                break 
          data = convert_data.convert_data(file_name, self.convert_type)
          if not data: 
-            return False 
+            break  
          for row in data: 
             if self.convert_type == 'pge':
                dbms = self.dbms + "_" + row['region'] 
