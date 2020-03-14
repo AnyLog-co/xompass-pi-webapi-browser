@@ -140,7 +140,7 @@ class GetData:
          boolean = False
          for i in range(2):
             try: # Try to find file with data  
-               file_name = self.rest_dir + "/" + sorted(os.listdir(self.rest_dir))[0]
+               file_name = self.rest_dir + "/" + os.listdir(self.rest_dir)[0]
             except: # if there isn't a file wait for 10 sec (repeat 6 times else exit) 
                if boolean == True:
                   print("No new data found")
@@ -173,7 +173,7 @@ class GetData:
                return False
          else:
             removed_files.append(file_name.rsplit("/", 1)[-1]) 
-         time.sleep(0.5) 
+         time.sleep(0.05) 
 
 def main(): 
    """
