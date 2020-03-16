@@ -55,7 +55,7 @@ def __convert_timestamp(value:int)->str:
    sec_value = value/100
    try:
       datetime_value = datetime.datetime.strptime(datetime.datetime.fromtimestamp(sec_value).strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S')
-   except:
+   except Exception:
       return False
    try:
       elapse_time =  datetime_value - datetime.datetime(1970, 1, 1, 0, 0, 0)
@@ -133,7 +133,7 @@ def convert_xompass_pi_data(file_name:str)->(list, str):
    try: 
       for part in read_file(file_name): 
          file_data_str += part.replace("\n", "").replace("\t", "") 
-   except: 
+   except Exception: 
       return False 
 
    for row in file_data_str.split("}")[:1]: 
@@ -185,12 +185,12 @@ def convert_csv_to_json(file_name:str, pge:bool = False)->list:
                if row[val].isdigit(): 
                    try: 
                       row[val] = int(row[val])
-                   except: 
+                   except Exception: 
                       row[val] = row[val] 
                else: 
                   try: 
                      row[val] = float(row[val]) 
-                  except: 
+                  except Exception: 
                      row[val] = row[val] 
             if len(row) > 0: 
                if pge is True: 
@@ -214,11 +214,25 @@ def convert_data(file_name:str, convert_type:str):
       if success return list of JSON + device_id 
       else return empty listt 
    """
+   output = False 
    if convert_type.lower() == 'xompass': 
-      return convert_xompass_data(file_name) 
+      try: 
+         output = convert_xompass_data(file_name) 
+      except Exception: 
+         pass
    elif convert_type.lower() == 'pi': 
-      return convert_xompass_pi_data(file_name) 
+      try:
+         output = convert_xompass_pi_data(file_name) 
+      except Exception: 
+         pass
    elif convert_type.lower() == 'csv': 
-      return convert_csv_to_json(file_name)
+      try:
+         output = convert_csv_to_json(file_name)
+      except Exception: 
+         pass
    elif convert_type.lower() == 'pge': 
-      return convert_csv_to_json(file_name, True)
+      try: 
+         output = convert_csv_to_json(file_name, True)
+      except Exception:
+         pass
+   return output 
