@@ -102,11 +102,15 @@ router.get('/get_sensors_in_element', function (req, res) {
 router.get('/get_sensor_data', function (req, res) {
     if(req.query.sid && req.query.time){
         let swebId = srvPiConfig.idToWebId[req.query.sid];
-        interf.getSensorDataSingle(swebId, req.query.time, req.query.retrievalmode || "Auto", function(data){
-            if(data){
-                res.send(data);
-            }
-        })
+        if(!swebId){
+            res.send("Invalid SID, make sure you have called /get_sensors_in_element of the element that contains this sensor.");
+        }else{
+            interf.getSensorDataSingle(swebId, req.query.time, req.query.retrievalmode || "Auto", function(data){
+                if(data){
+                    res.send(data);
+                }
+            })
+        }
     }else{
         res.send("Invalid Request");
     }
@@ -148,11 +152,16 @@ router.get('/get_sensor_data_summary', function (req, res) {
 router.get('/get_sensor_data_range', function (req, res) {
     if(req.query.sid && req.query.stime && req.query.etime){
         let swebId = srvPiConfig.idToWebId[req.query.sid];
-        interf.getSensorData(swebId, req.query.stime,req.query.etime, function(data){
-            if(data){
-                res.send(data);
-            }
-        })
+        if(!swebId){
+            res.send("Invalid SID, make sure you have called /get_sensors_in_element of the element that contains this sensor.");
+        }else{
+            interf.getSensorData(swebId, req.query.stime,req.query.etime, function(data){
+                if(data){
+                    res.send(data);
+                }
+            })
+        }
+
     }else{
         res.send("Invalid Request");
     }
