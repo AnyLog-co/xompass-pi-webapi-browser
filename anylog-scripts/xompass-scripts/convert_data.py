@@ -1,3 +1,4 @@
+import ast 
 import csv 
 import datetime 
 import json 
@@ -19,10 +20,10 @@ def __convert_json_to_dict(data:str)->dict:
       JSON as a dict, if fail False 
    """
    try: 
-      return json.loads(data.replace("'", '"')) 
+      return ast.literal_eval(data) 
    except Exception as e: 
       print('Failed to convert JSON to dict. (Error: %s)' % e)
-      return False 
+      return False
 
 def __convert_dict_to_json(data:dict)->str: 
    """
@@ -91,9 +92,12 @@ def convert_xompass_data(file_name:str)->(list, str):
    data_set = [] 
    device_id = '' 
 
-   timestamp = file_name.split(".")[1].rsplit("_", 1)[0]
-   timestamp = time.mktime(datetime.datetime.strptime(timestamp, "%Y_%m_%d_%H_%M_%S").timetuple())
-   timestamp = datetime.datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S') 
+   try: 
+      timestamp = file_name.split(".")[1].rsplit("_", 1)[0]
+      timestamp = time.mktime(datetime.datetime.strptime(timestamp, "%Y_%m_%d_%H_%M_%S").timetuple())
+      timestamp = datetime.datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S') 
+   except: 
+      timestamp = datetime.datetime.now() 
 
    file_data = read_file(file_name) 
    if not file_data: 
