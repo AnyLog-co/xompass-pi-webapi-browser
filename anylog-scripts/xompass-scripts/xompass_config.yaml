@@ -1,5 +1,5 @@
 # file name: db_name.device_id.timestamp.table_name.json 
-db_name: pge_test
-device_id: mp_id 
+db_name: xompass_db 
+device_id: device_id 
 timestamp: timestamp 
-table_name: device_sensor
+table_name: ova_table_test

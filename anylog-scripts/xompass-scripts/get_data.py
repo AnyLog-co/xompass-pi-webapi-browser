@@ -164,17 +164,15 @@ class GetData:
                json_obj = convert_dict_to_json(row)  
                self.fi.file_io(file_name, dbms, self.config_data, json_obj)
             else: 
-              rm_file =  self.fi.file_io(file_name, self.dbms, self.config_data, row) 
-         
-         if rm_file: 
-            if remove_file: 
-               try: # remove once doe 
-                  os.remove(file_name)
-               except Exception as e:
-                  print("Failed to remove file (%s) - %s" (file_name, e))
-                  return False
-            else:
-               removed_files.append(file_name.rsplit("/", 1)[-1]) 
+               self.fi.file_io(file_name, self.dbms, self.config_data, row) 
+         if remove_file: 
+            try: # remove once doe 
+               os.remove(file_name)
+            except Exception as e:
+               print("Failed to remove file (%s) - %s" (file_name, e))
+               return False
+         else:
+            removed_files.append(file_name.rsplit("/", 1)[-1]) 
          time.sleep(0.05) 
 
 def main(): 
