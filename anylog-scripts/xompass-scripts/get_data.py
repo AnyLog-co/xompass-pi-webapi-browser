@@ -124,10 +124,11 @@ class GetData:
 
       return ret_value
 
-   def get_data(self, remove_file:bool):
+   def get_data(self, remove_file:bool, timeout:float):
       """
       Main for class
       :args: 
+         remove_file:bool - decide whether to remove file at the end of the process 
          timeout:float - wait before retrying and exit 
       :param: 
          count:int - iteration count for when data DNE in download dir 
@@ -145,7 +146,7 @@ class GetData:
                if boolean == True:
                   print("No new data found")
                   exit(1) 
-               time.sleep(60)
+               time.sleep(timeout)
                boolean = True
             else: # reset 
                boolean = False
@@ -197,13 +198,14 @@ def main():
    parser.add_argument('-fs', '--file-size',    type=float, default=1,                                        help='file size')  
    parser.add_argument('-ct', '--convert-type', type=str,   default='pi', choices=['xompass', 'pi', 'csv', 'pge'],   help='type of JSON conversion') 
    parser.add_argument('-cf', '--config-file',  type=str,   default=None,                                     help='config used to file')
+   parser.add_argument('-to', '--timeout',      type=float, default=60,  help='length of time (in seconds) to wait before new attepmpt')
    parser.add_argument('--remove-file',         action='store_true',                                          help='if set remove')
    args = parser.parse_args()
    
    gd = GetData(args.rest_dir, args.prep_dir, args.watch_dir, args.dbms, args.file_size, args.convert_type, args.config_file) 
    if not gd.validate_dirs(): 
       exit(1) 
-   gd.get_data(args.remove_file)
+   gd.get_data(args.remove_file, args.timeout)
 
 if __name__ == '__main__': 
    main()
