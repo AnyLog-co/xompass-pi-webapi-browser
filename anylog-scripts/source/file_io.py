@@ -26,7 +26,7 @@ class FileIO:
       return file_size * 1000000
 
 
-   def check_if_file_exists(self, sensor_id:str, name:str)->str: 
+   def check_if_file_exists(self, sensor_id:str, sensor_name:str)->str: 
       """
       Based on sensor_id and sensor_name check if file exists 
       :args: 
@@ -36,7 +36,7 @@ class FileIO:
          if exists get file else return False   
       """
       ret_value = ""
-      file_name = '%s/%s.%s.*.%s_%s.json' % (self.generate_data_prep, self.database_name, sensor_id, name.lower(), self.sensor_device_type)
+      file_name = '%s/%s.%s_sensor.*%s.*.json' % (self.generate_data_prep, self.database_name, sensor_name.lower(), sensor_id)
       try: 
          ret_value = glob.glob(file_name)
       except Exception as e:
@@ -96,7 +96,7 @@ class FileIO:
       :return: 
          if able to create file return name, else return False 
       """
-      file_name = '%s/%s.%s.%s.%s_%s.json' % (self.generate_data_prep, self.database_name, sensor_id, timestamp, sensor_name.lower(), self.sensor_device_type)
+      file_name = '%s/%s.%s_%s.%s.%s.%s.json' % (self.generate_data_prep, self.database_name, sensor_name.lower(), self.sensor_device_type, '06251e6e4646be2d9d702fc50c4d87cc', sensor_id, timestamp)
       try: 
          open(file_name, 'w').close()
       except Exception as e: 
