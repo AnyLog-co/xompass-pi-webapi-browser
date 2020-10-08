@@ -15,7 +15,6 @@ def main():
       for file_name in os.listdir(generate_data_prep):
          seconds = time.time() - os.path.getmtime(generate_data_prep + '/' + file_name) 
          if (seconds / 3600) >= 1: 
-            print(file_name) 
             os.rename(generate_data_prep + '/' + file_name, publisher_data_in + '/' + file_name)
       time.sleep(30)
 
