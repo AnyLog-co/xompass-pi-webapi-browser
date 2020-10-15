@@ -21,9 +21,9 @@ def __get_file(dir_name:str, file_name:str)->str:
 
    if data_file == None: 
       if '/' == dir_name[-1]:
-         data_file = dir_name + '%s.%s.json' % (file_name, time.time())
+         data_file = dir_name + '%s.%s_snsor.json' % (file_name, time.time())
       if '/' != dir_name[-1]:
-         data_file = dir_name + '/' + '%s.%s.json' % (file_name, time.time())     
+         data_file = dir_name + '/' + '%s.%s_sensor.json' % (file_name, time.time())     
    return data_file 
 
 
@@ -59,7 +59,6 @@ def get_data(file_name:str)->str:
    raw_data = None 
    with open(file_name, 'r') as f: 
       raw_data  = json.loads(f.read())
-   print(raw_data['Path'].rsplit('\\')[-1].split('|')[0])  
    store_data = {
       'parentelement': raw_data['ParentElement'], 
       'webid': raw_data['WebId'], 
@@ -158,6 +157,7 @@ def get_data_main():
             pass 
          if size >= file_size: 
             os.rename(file_name, file_name.replace(prep_dir, watch_dir)) 
+         time.sleep(0.5) 
       time.sleep(args.timeout) 
 
 

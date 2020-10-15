@@ -42,7 +42,7 @@ jspm_packages
 # Optional REPL history
 .node_repl_history
 
-output_data/
-config_files/
+/output_data/
+/config_files/
 
 __pycache__/
